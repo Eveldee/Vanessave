@@ -1,0 +1,29 @@
+﻿@using Vanessave.Services
+@using Vanessave.Utils
+@inject SaveCipherProvider SaveCipher
+
+<MudFileUpload T="IBrowserFile" Accept=".dat" FilesChanged="UploadFiles">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context.Id">
+            @Label
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
+@code {
+    public event Action<string>? OnSaveLoad;
+
+    [Parameter]
+    public string Label { get; set; } = "Pick a file";
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+        var systemSave = await SaveCipher.DecryptSave(file.OpenReadStream());
+
+        OnSaveLoad?.Invoke(JsonUtils.Prettify(systemSave));
+    }
+}

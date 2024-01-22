@@ -1,0 +1,92 @@
+﻿@page "/system-settings/skin-picker"
+@using Vanessave.Nobeta
+@using Vanessave.Utils
+@using Humanizer
+@using Vanessave.Services
+@inject IJSRuntime JS
+@inject SaveCipherProvider SaveCipher
+
+<h1>Pick a skin</h1>
+
+<SavePicker @ref="_savePicker" Label="Pick System Settings (System.dat)" />
+
+<MudDivider Class="my-4"/>
+
+@* TODO Warn that it only works when the game is off and not for DLC skins if the DLC is not present *@
+
+@if (_systemSettings is null)
+{
+    <MudText>Load a system settings file first.</MudText>
+}
+else
+{
+    <MudCarousel Class="mud-width-full" ItemsSource="@_source" @bind-SelectedIndex="_systemSettings.CurrentSkin" ShowArrows="true" ShowBullets="false" AutoCycle="false" Style="height: 600px;" >
+        <ItemTemplate>
+            <div class="d-flex flex-column flex-column justify-center" style="height:100%;">
+                <MudImage Alt="Skin Preview" Src="@context.PreviewUri" Style="width: 400px;" Class="mx-auto"/>
+                <MudText Align="@Align.Center" Class="mx-auto">@context.SkinName</MudText>
+            </div>
+        </ItemTemplate>
+    </MudCarousel>
+    <MudPagination @bind-Selected:get="@(_systemSettings.CurrentSkin + 1)" @bind-Selected:set="@(index => _systemSettings.CurrentSkin = index - 1)" Count="@_source.Length" Class="pa-4 justify-center d-flex"/>
+
+    <div id="fab-download">
+        <MudTooltip Text="Download modified settings">
+            <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Download" @onclick="DownloadSettings" />
+        </MudTooltip>
+    </div>
+}
+
+@code {
+    private SavePicker _savePicker = null!;
+    private SystemSettings? _systemSettings;
+
+    private readonly SkinInfo[] _source = Enum.GetValues<GameSkin>()
+        .Select(skin => new SkinInfo(skin.Humanize(), $"/assets/skins/Skin_{skin.ToString()}.png"))
+        .ToArray();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _savePicker.OnSaveLoad += OnSaveLoad;
+        }
+    }
+
+    private void OnSaveLoad(string settings)
+    {
+        try
+        {
+            _systemSettings = JsonUtils.LoadSystemSettings(settings);
+        }
+        catch
+        {
+            // TODO Add alert
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task DownloadSettings()
+    {
+        if (_systemSettings is null)
+        {
+            return;
+        }
+
+        // Write new settings and download it
+        var settingsText = JsonUtils.WriteSave(_systemSettings);
+
+        await using var encryptedDataStream = SaveCipher.GetEncryptStream(settingsText);
+        using var streamRef = new DotNetStreamReference(encryptedDataStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", "System.dat", streamRef);
+    }
+
+    public void Dispose()
+    {
+        _savePicker.OnSaveLoad -= OnSaveLoad;
+    }
+
+    private record SkinInfo(string SkinName, string PreviewUri);
+}

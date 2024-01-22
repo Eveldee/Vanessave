@@ -1,0 +1,38 @@
+﻿@page "/system-settings/inspector"
+
+<h1>Inspect System Settings</h1>
+
+<SavePicker @ref="_savePicker" Label="Pick System Settings (System.dat)" />
+
+<MudPaper Class="mt-4" Outlined="true" MinHeight="400px">
+    @if (!string.IsNullOrWhiteSpace(_inspectText))
+    {
+        <CodeHighlight Indent="false" CodeLanguage="json" Code="@_inspectText"/>
+    }
+</MudPaper>
+
+@code {
+    private SavePicker _savePicker = null!;
+
+    private string _inspectText = "";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _savePicker.OnSaveLoad += OnSaveLoad;
+        }
+    }
+
+    private void OnSaveLoad(string save)
+    {
+        _inspectText = save;
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _savePicker.OnSaveLoad -= OnSaveLoad;
+    }
+}
