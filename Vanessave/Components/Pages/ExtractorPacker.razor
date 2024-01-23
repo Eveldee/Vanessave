@@ -2,17 +2,22 @@
 @using Vanessave.Utils
 @using Vanessave.Services
 @using System.Text
+@using BlazorMonaco.Editor
 @inject SaveCipherProvider SaveCipher
 @inject IJSRuntime JS
+@inject ISnackbar Snackbar
 
 <MudText Typo="Typo.h3" Class="mb-6">Extractor/Packer</MudText>
 
-<SavePicker @ref="_savePicker" AllowJson="true" Prettify="true" Label="Pick a Save or System Settings (.dat, .json)" />
+<SavePicker @ref="_savePicker" AllowJson="true" Prettify="true" Label="Pick a Save or System Settings (.dat, .json)"/>
 
 <MudPaper Class="mt-4" Outlined="true" MinHeight="400px">
     @if (!string.IsNullOrWhiteSpace(_jsonSave))
     {
-        <CodeHighlight Indent="false" CodeLanguage="json" Code="@_jsonSave"/>
+        @* <CodeHighlight Indent="false" CodeLanguage="json" Code="@_jsonSave"/> *@
+        <div>
+            <StandaloneCodeEditor @ref="_monacoEditor" Id="extractor-packer-editor" ConstructionOptions="ConstructionOptions"/>
+        </div>
 
         <div class="fab-download">
             <MudTooltip Text="Download as .dat">
@@ -31,6 +36,7 @@
 
 @code {
     private SavePicker _savePicker = null!;
+    private StandaloneCodeEditor _monacoEditor;
 
     private string? _jsonSave = null;
 
@@ -49,15 +55,29 @@
         StateHasChanged();
     }
 
+    private StandaloneEditorConstructionOptions ConstructionOptions(StandaloneCodeEditor arg)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "json",
+            Theme = "vs-dark",
+            Value = _jsonSave
+        };
+    }
+
     private async Task DownloadDat()
     {
-        if (_jsonSave is null || !JsonUtils.IsValidSaveJson(_jsonSave))
+        var value = await _monacoEditor.GetValue();
+
+        if (value is null || !JsonUtils.IsValidSaveJson(value))
         {
+            AlertInvalidJson();
             return;
         }
 
         // Write new settings and download it
-        var minifiedJson = JsonUtils.Minify(_jsonSave);
+        var minifiedJson = JsonUtils.Minify(value);
 
         await using var encryptedDataStream = SaveCipher.GetEncryptStream(minifiedJson);
         using var streamRef = new DotNetStreamReference(encryptedDataStream);
@@ -67,18 +87,26 @@
 
     private async Task DownloadJson()
     {
-        if (_jsonSave is null || !JsonUtils.IsValidSaveJson(_jsonSave))
+        var value = await _monacoEditor.GetValue();
+
+        if (value is null || !JsonUtils.IsValidSaveJson(value))
         {
+            AlertInvalidJson();
             return;
         }
 
         // Write new settings and download it
-        var minifiedJson = JsonUtils.Prettify(_jsonSave);
+        var minifiedJson = JsonUtils.Prettify(value);
 
         await using var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(minifiedJson));
         using var streamRef = new DotNetStreamReference(dataStream);
 
         await JS.InvokeVoidAsync("downloadFileFromStream", Path.ChangeExtension(_savePicker.FileName, ".json"), streamRef);
+    }
+
+    private void AlertInvalidJson()
+    {
+        Snackbar.Add("Invalid json, check errors in editor.", Severity.Error, options => options.CloseAfterNavigation = true);
     }
 
     public void Dispose()
