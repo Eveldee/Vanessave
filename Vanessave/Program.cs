@@ -9,7 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(configuration =>
+{
+    configuration.SnackbarConfiguration.ClearAfterNavigation = true;
+    configuration.SnackbarConfiguration.PreventDuplicates = false;
+});
 builder.Services.AddHighlight();
 
 builder.Services.AddSingleton<SaveCipherProvider>();

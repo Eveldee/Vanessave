@@ -3,15 +3,20 @@
 @using Vanessave.Utils
 @using Humanizer
 @using Vanessave.Services
+@using Vanessave.Utils.Extensions
 @inject IJSRuntime JS
 @inject SaveCipherProvider SaveCipher
+@inject ISnackbar Snackbar
 
 <MudText Typo="Typo.h3" Class="mb-6">Skin Selector</MudText>
 
 <SavePicker @ref="_savePicker" Label="Pick System Settings (System.dat)"/>
 
+<pre><MudText>
+<MudAlert Severity="Severity.Warning" Class="mt-4">A restart of the game is needed in order to apply the new selected skin.
 
-@* TODO Warn that it only works when the game is off and not for DLC skins if the DLC is not present *@
+The game will ignore any DLC skin if you don't posses the according DLC.</MudAlert>
+</MudText></pre>
 
 @if (_systemSettings is null)
 {
@@ -22,7 +27,7 @@
 else
 {
     <MudPaper Outlined="true" Class="pa-4 mt-4" Style=" user-select: none;">
-        <MudCarousel Class="mud-width-full" ItemsSource="@_source" @bind-SelectedIndex="_systemSettings.CurrentSkin" ShowArrows="true" ShowBullets="false" AutoCycle="false" Style="height: 600px;">
+        <MudCarousel Class="mud-width-full" ItemsSource="@_source" @bind-SelectedIndex="_systemSettings.CurrentSkin" ShowArrows="true" ShowBullets="false" AutoCycle="false" Style="height: 550px;">
             <ItemTemplate>
                 <div class="d-flex flex-column flex-column justify-center" style="height:100%;">
                     <MudImage Alt="Skin Preview" Src="@context.PreviewUri" Style="width: 400px;" Class="mx-auto"/>
@@ -57,18 +62,20 @@ else
         }
     }
 
-    private void OnSaveLoad(string settings)
+    private Task OnSaveLoad(string settings)
     {
         try
         {
             _systemSettings = JsonUtils.LoadSystemSettings(settings);
+
+            StateHasChanged();
         }
         catch
         {
-            // TODO Add alert
+            Snackbar.AddError("Invalid System Settings file, make sure you load \"System.dat\".");
         }
 
-        StateHasChanged();
+        return Task.CompletedTask;
     }
 
     private async Task DownloadSettings()

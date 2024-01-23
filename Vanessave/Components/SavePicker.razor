@@ -16,7 +16,7 @@
 </MudFileUpload>
 
 @code {
-    public event Action<string>? OnSaveLoad;
+    public event Func<string, Task>? OnSaveLoad;
 
     [Parameter]
     public string Label { get; set; } = "Pick a file";
@@ -44,6 +44,9 @@
             systemSave = await SaveCipher.DecryptSave(file.OpenReadStream());
         }
 
-        OnSaveLoad?.Invoke(Prettify ? JsonUtils.Prettify(systemSave) : systemSave);
+        if (OnSaveLoad is not null)
+        {
+            await OnSaveLoad.Invoke(Prettify ? JsonUtils.Prettify(systemSave) : systemSave);
+        }
     }
 }

@@ -3,11 +3,12 @@
 @using Vanessave.Services
 @using System.Text
 @using BlazorMonaco.Editor
+@using Vanessave.Utils.Extensions
 @inject SaveCipherProvider SaveCipher
 @inject IJSRuntime JS
 @inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h3" Class="mb-6">Extractor/Packer</MudText>
+<MudText Typo="Typo.h3" Class="mb-6">Extractor/Editor/Packer</MudText>
 
 <SavePicker @ref="_savePicker" AllowJson="true" Prettify="true" Label="Pick a Save or System Settings (.dat, .json)"/>
 
@@ -36,7 +37,7 @@
 
 @code {
     private SavePicker _savePicker = null!;
-    private StandaloneCodeEditor _monacoEditor;
+    private StandaloneCodeEditor? _monacoEditor;
 
     private string? _jsonSave = null;
 
@@ -48,11 +49,16 @@
         }
     }
 
-    private void OnSaveLoad(string save)
+    private async Task OnSaveLoad(string save)
     {
         _jsonSave = save;
 
-        StateHasChanged();
+        if (_monacoEditor is not null)
+        {
+            await _monacoEditor.SetValue(save);
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private StandaloneEditorConstructionOptions ConstructionOptions(StandaloneCodeEditor arg)
@@ -68,7 +74,7 @@
 
     private async Task DownloadDat()
     {
-        var value = await _monacoEditor.GetValue();
+        var value = await _monacoEditor!.GetValue();
 
         if (value is null || !JsonUtils.IsValidSaveJson(value))
         {
@@ -87,7 +93,7 @@
 
     private async Task DownloadJson()
     {
-        var value = await _monacoEditor.GetValue();
+        var value = await _monacoEditor!.GetValue();
 
         if (value is null || !JsonUtils.IsValidSaveJson(value))
         {
@@ -106,7 +112,7 @@
 
     private void AlertInvalidJson()
     {
-        Snackbar.Add("Invalid json, check errors in editor.", Severity.Error, options => options.CloseAfterNavigation = true);
+        Snackbar.AddError("Invalid json, check errors in editor.");
     }
 
     public void Dispose()
