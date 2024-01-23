@@ -8,7 +8,7 @@
     <div class="sidebar mud-elevation-1">
         <div class="top-row mud-drawer-head">
             <div>
-                <a class="navbar-brand" href="https://mudblazor.com/" target="_blank">MudBlazor</a>
+                <a class="navbar-brand" href="https://mudblazor.com/" target="_blank">Vanessave</a>
             </div>
         </div>
 
@@ -21,11 +21,13 @@
 
     <main>
         <div class="top-row px-4">
-            <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Style="color: white;" Link="https://mudblazor.com/" Target="_blank"/>
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="color: white;" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank"/>
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="color: white;" Link="https://github.com/Eveldee/Vanessave" Target="_blank"/>
         </div>
 
-        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2 pt-2">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-2 pt-2">
+            <MudScrollToTop>
+                <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+            </MudScrollToTop>
             @Body
         </MudContainer>
     </main>

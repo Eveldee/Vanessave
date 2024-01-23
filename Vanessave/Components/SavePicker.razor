@@ -1,8 +1,9 @@
 ﻿@using Vanessave.Services
 @using Vanessave.Utils
+@using System.Net.Mime
 @inject SaveCipherProvider SaveCipher
 
-<MudFileUpload T="IBrowserFile" Accept=".dat" FilesChanged="UploadFiles">
+<MudFileUpload T="IBrowserFile" Accept="@(AllowJson ? ".dat, .json" : ".dat")" FilesChanged="UploadFiles">
     <ButtonTemplate>
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
@@ -20,10 +21,29 @@
     [Parameter]
     public string Label { get; set; } = "Pick a file";
 
+    [Parameter]
+    public bool AllowJson { get; set; } = false;
+
+    [Parameter]
+    public bool Prettify { get; set; } = false;
+
+    public string FileName { get; set; } = "";
+
     private async Task UploadFiles(IBrowserFile file)
     {
-        var systemSave = await SaveCipher.DecryptSave(file.OpenReadStream());
+        FileName = file.Name;
 
-        OnSaveLoad?.Invoke(JsonUtils.Prettify(systemSave));
+        // No need to decrypt and deserialize if it's already an extracted json save
+        string systemSave;
+        if (AllowJson && FileName.EndsWith(".json"))
+        {
+            systemSave = await new StreamReader(file.OpenReadStream()).ReadToEndAsync();
+        }
+        else
+        {
+            systemSave = await SaveCipher.DecryptSave(file.OpenReadStream());
+        }
+
+        OnSaveLoad?.Invoke(Prettify ? JsonUtils.Prettify(systemSave) : systemSave);
     }
 }

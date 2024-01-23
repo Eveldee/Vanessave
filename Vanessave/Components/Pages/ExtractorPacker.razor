@@ -1,0 +1,88 @@
+﻿@page "/general/extractor-packer"
+@using Vanessave.Utils
+@using Vanessave.Services
+@using System.Text
+@inject SaveCipherProvider SaveCipher
+@inject IJSRuntime JS
+
+<MudText Typo="Typo.h3" Class="mb-6">Extractor/Packer</MudText>
+
+<SavePicker @ref="_savePicker" AllowJson="true" Prettify="true" Label="Pick a Save or System Settings (.dat, .json)" />
+
+<MudPaper Class="mt-4" Outlined="true" MinHeight="400px">
+    @if (!string.IsNullOrWhiteSpace(_jsonSave))
+    {
+        <CodeHighlight Indent="false" CodeLanguage="json" Code="@_jsonSave"/>
+
+        <div class="fab-download">
+            <MudTooltip Text="Download as .dat">
+                <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Download" @onclick="DownloadDat"/>
+            </MudTooltip>
+        </div>
+
+        <div class="fab-download" style="bottom: 9%;">
+            <MudTooltip Text="Download as .json">
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Custom.FileFormats.FileCode" @onclick="DownloadJson"/>
+            </MudTooltip>
+        </div>
+    }
+</MudPaper>
+
+
+@code {
+    private SavePicker _savePicker = null!;
+
+    private string? _jsonSave = null;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _savePicker.OnSaveLoad += OnSaveLoad;
+        }
+    }
+
+    private void OnSaveLoad(string save)
+    {
+        _jsonSave = save;
+
+        StateHasChanged();
+    }
+
+    private async Task DownloadDat()
+    {
+        if (_jsonSave is null || !JsonUtils.IsValidSaveJson(_jsonSave))
+        {
+            return;
+        }
+
+        // Write new settings and download it
+        var minifiedJson = JsonUtils.Minify(_jsonSave);
+
+        await using var encryptedDataStream = SaveCipher.GetEncryptStream(minifiedJson);
+        using var streamRef = new DotNetStreamReference(encryptedDataStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", Path.ChangeExtension(_savePicker.FileName, ".dat"), streamRef);
+    }
+
+    private async Task DownloadJson()
+    {
+        if (_jsonSave is null || !JsonUtils.IsValidSaveJson(_jsonSave))
+        {
+            return;
+        }
+
+        // Write new settings and download it
+        var minifiedJson = JsonUtils.Prettify(_jsonSave);
+
+        await using var dataStream = new MemoryStream(Encoding.UTF8.GetBytes(minifiedJson));
+        using var streamRef = new DotNetStreamReference(dataStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", Path.ChangeExtension(_savePicker.FileName, ".json"), streamRef);
+    }
+
+    public void Dispose()
+    {
+        _savePicker.OnSaveLoad -= OnSaveLoad;
+    }
+}

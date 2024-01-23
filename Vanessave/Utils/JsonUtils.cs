@@ -10,9 +10,15 @@ public static class JsonUtils
         WriteIndented = true
     };
 
+    private static readonly JsonSerializerOptions MinifyOptions = new()
+    {
+        WriteIndented = false
+    };
+
     private static readonly JsonSerializerOptions SaveOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false
     };
 
     public static string WriteSave(SystemSettings settings)
@@ -30,5 +36,26 @@ public static class JsonUtils
         var element = JsonSerializer.Deserialize<JsonElement>(minimizedJson);
 
         return JsonSerializer.Serialize(element, PrettifyOptions).Replace("  ", "\t");
+    }
+
+    public static string Minify(string prettifiedJson)
+    {
+        var element = JsonSerializer.Deserialize<JsonElement>(prettifiedJson);
+
+        return JsonSerializer.Serialize(element, MinifyOptions);
+    }
+
+    public static bool IsValidSaveJson(string json)
+    {
+        try
+        {
+            JsonSerializer.Deserialize<JsonElement>(json, SaveOptions);
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }
