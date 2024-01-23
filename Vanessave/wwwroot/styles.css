@@ -1,5 +1,13 @@
 ﻿.fab-download {
     position: fixed;
+
     right: 2%;
     bottom: 2%;
+}
+
+.fab-download-medium {
+    position: fixed;
+
+    right: 2.20%;
+    bottom: 2.20%;
 }
