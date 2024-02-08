@@ -10,7 +10,7 @@ public class SystemSettings
     public int SoulAcquired { get; set; }
     public int EnemiesDefeated { get; set; }
     public int GameCleared { get; set; }
-    public required Achievements[] Achievements { get; set; }
+    public required Achievement[] Achievements { get; set; }
     public bool AllTaniaPropsUnlocked { get; set; }
     public bool AllMonicaPropsUnlocked { get; set; }
     public bool AllVanessaPropsUnlock { get; set; }
@@ -25,7 +25,7 @@ public class SystemSettings
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class Achievements
+public class Achievement
 {
     public int Id { get; set; }
     public bool Unlocked { get; set; }

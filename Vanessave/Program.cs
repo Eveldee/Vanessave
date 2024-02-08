@@ -17,6 +17,7 @@ builder.Services.AddMudServices(configuration =>
 builder.Services.AddHighlight();
 
 builder.Services.AddSingleton<SaveCipherProvider>();
+builder.Services.AddSingleton<AchievementMetadataProvider>();
 
 var app = builder.Build();
 

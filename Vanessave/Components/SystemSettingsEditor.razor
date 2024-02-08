@@ -1,0 +1,96 @@
+﻿@using Vanessave.Nobeta
+@using Vanessave.Utils
+@using Vanessave.Services
+@using Vanessave.Utils.Extensions
+@inject IJSRuntime JS
+@inject SaveCipherProvider SaveCipher
+@inject ISnackbar Snackbar
+
+<SavePicker @ref="_savePicker" Label="Pick System Settings (System.dat)"/>
+
+@TitleContent
+
+@if (!HideDividerWhenLoaded)
+{
+    <MudDivider Class="my-4"/>
+}
+
+@if (SystemSettings is null)
+{
+    @if (HideDividerWhenLoaded)
+    {
+        <MudDivider Class="my-4"/>
+    }
+
+    <MudText>Load a system settings file first.</MudText>
+}
+else
+{
+    @LoadedContent
+
+    <div class="fab-download">
+        <MudTooltip Text="Download modified settings">
+            <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Download" @onclick="DownloadSettings"/>
+        </MudTooltip>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? TitleContent { get; set; }
+
+    [Parameter, EditorRequired]
+    public RenderFragment? LoadedContent { get; set; }
+
+    [Parameter]
+    public bool HideDividerWhenLoaded { get; set; } = false;
+
+    public SystemSettings? SystemSettings { get; private set; }
+
+    private SavePicker _savePicker = null!;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _savePicker.OnSaveLoad += OnSaveLoad;
+        }
+    }
+
+    private Task OnSaveLoad(string settings)
+    {
+        try
+        {
+            SystemSettings = JsonUtils.LoadSystemSettings(settings);
+
+            StateHasChanged();
+        }
+        catch
+        {
+            Snackbar.AddError("Invalid System Settings file, make sure you load \"System.dat\".");
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task DownloadSettings()
+    {
+        if (SystemSettings is null)
+        {
+            return;
+        }
+
+        // Write new settings and download it
+        var settingsText = JsonUtils.WriteSave(SystemSettings);
+
+        await using var encryptedDataStream = SaveCipher.GetEncryptStream(settingsText);
+        using var streamRef = new DotNetStreamReference(encryptedDataStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", "System.dat", streamRef);
+    }
+
+    public void Dispose()
+    {
+        _savePicker.OnSaveLoad -= OnSaveLoad;
+    }
+}
