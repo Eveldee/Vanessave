@@ -1,6 +1,8 @@
 ﻿@using Vanessave.Services
 @using Vanessave.Utils
 @using System.Net.Mime
+@using Vanessave.Components.Models
+@implements IDisposable
 @inject SaveCipherProvider SaveCipher
 
 <MudFileUpload T="IBrowserFile" Accept="@(AllowJson ? ".dat, .json" : ".dat")" FilesChanged="UploadFiles">
@@ -27,26 +29,57 @@
     [Parameter]
     public bool Prettify { get; set; } = false;
 
+    [CascadingParameter]
+    public SaveDropContext? SaveDropContext { get; set; }
+
     public string FileName { get; set; } = "";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (SaveDropContext is not null)
+            {
+                SaveDropContext.OnFileDrop += OnFileDrop;
+            }
+        }
+    }
 
     private async Task UploadFiles(IBrowserFile file)
     {
         FileName = file.Name;
 
         // No need to decrypt and deserialize if it's already an extracted json save
-        string systemSave;
+        string save;
         if (AllowJson && FileName.EndsWith(".json"))
         {
-            systemSave = await new StreamReader(file.OpenReadStream()).ReadToEndAsync();
+            save = await new StreamReader(file.OpenReadStream()).ReadToEndAsync();
+        }
+        else if (FileName.EndsWith(".dat"))
+        {
+            save = await SaveCipher.DecryptSave(file.OpenReadStream());
         }
         else
         {
-            systemSave = await SaveCipher.DecryptSave(file.OpenReadStream());
+            return;
         }
 
         if (OnSaveLoad is not null)
         {
-            await OnSaveLoad.Invoke(Prettify ? JsonUtils.Prettify(systemSave) : systemSave);
+            await OnSaveLoad.Invoke(Prettify ? JsonUtils.Prettify(save) : save);
+        }
+    }
+
+    private async Task OnFileDrop(IBrowserFile file)
+    {
+        await UploadFiles(file);
+    }
+
+    public void Dispose()
+    {
+        if (SaveDropContext is not null)
+        {
+            SaveDropContext.OnFileDrop -= OnFileDrop;
         }
     }
 }

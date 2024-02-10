@@ -1,0 +1,53 @@
+﻿@using Vanessave.Components.Models
+@using Toolbelt.Blazor.FileDropZone
+@inject ILogger<SaveDrop> Logger
+@inject NavigationManager Navigation
+
+<div class="save-drop"
+     @ondragenter="OpenOverlay">
+    <FileDropZone class="drop-zone rounded-lg">
+        @if (Navigation.Uri != Navigation.BaseUri)
+        {
+            <InputFile class="absolute invisible" OnChange="OnInputFileChange" />
+        }
+
+        <CascadingValue Value="_dropContext">
+            @ChildContent
+        </CascadingValue>
+
+        @if (Navigation.Uri != Navigation.BaseUri)
+        {
+          <MudOverlay Visible="@_overlayVisible" DarkBackground="true" @ondragleave="CloseOverlay" @ondragend="CloseOverlay" />
+        }
+    </FileDropZone>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool _overlayVisible = false;
+    private readonly SaveDropContext _dropContext = new();
+
+    private Task OnInputFileChange(InputFileChangeEventArgs fileChangeEventArgs)
+    {
+        _overlayVisible = false;
+
+        Logger.LogTrace("File drag dropped: {FileName}", fileChangeEventArgs.File.Name);
+
+        return _dropContext.DropFile(fileChangeEventArgs.File);
+    }
+
+    private void OpenOverlay()
+    {
+        if (Navigation.Uri != Navigation.BaseUri)
+        {
+            _overlayVisible = true;
+        }
+    }
+
+    private void CloseOverlay()
+    {
+        _overlayVisible = false;
+    }
+}
