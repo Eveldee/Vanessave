@@ -1,0 +1,97 @@
+﻿@using Vanessave.Nobeta
+@using Vanessave.Utils
+@using Vanessave.Services
+@using Vanessave.Utils.Extensions
+@implements IDisposable
+@inject IJSRuntime JS
+@inject SaveCipherProvider SaveCipher
+@inject ISnackbar Snackbar
+
+<SavePicker @ref="_savePicker" Label="Pick Game Save (GameSave0X.dat)"/>
+
+@TitleContent
+
+@if (!HideDividerWhenLoaded)
+{
+    <MudDivider Class="my-4"/>
+}
+
+@if (GameSave is null)
+{
+    @if (HideDividerWhenLoaded)
+    {
+        <MudDivider Class="my-4"/>
+    }
+
+    <MudText>Load a game save file first.</MudText>
+}
+else
+{
+    @LoadedContent
+
+    <div class="fab-download">
+        <MudTooltip Text="Download modified save">
+            <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Download" @onclick="DownloadSave"/>
+        </MudTooltip>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? TitleContent { get; set; }
+
+    [Parameter, EditorRequired]
+    public RenderFragment? LoadedContent { get; set; }
+
+    [Parameter]
+    public bool HideDividerWhenLoaded { get; set; } = false;
+
+    public GameSave? GameSave { get; private set; }
+
+    private SavePicker _savePicker = null!;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _savePicker.OnSaveLoad += OnSaveLoad;
+        }
+    }
+
+    private Task OnSaveLoad(string settings)
+    {
+        try
+        {
+            GameSave = JsonUtils.LoadGameSave(settings);
+
+            StateHasChanged();
+        }
+        catch
+        {
+            Snackbar.AddError("Invalid Game Save file, make sure you load \"GameSave0X.dat\".");
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task DownloadSave()
+    {
+        if (GameSave is null)
+        {
+            return;
+        }
+
+        // Write new settings and download it
+        var saveText = JsonUtils.WriteSave(GameSave);
+
+        await using var encryptedDataStream = SaveCipher.GetEncryptStream(saveText);
+        using var streamRef = new DotNetStreamReference(encryptedDataStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", $"GameSave{GameSave.Basic.DataIndex:D2}.dat", streamRef);
+    }
+
+    public void Dispose()
+    {
+        _savePicker.OnSaveLoad -= OnSaveLoad;
+    }
+}

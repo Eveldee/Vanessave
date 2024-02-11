@@ -19,10 +19,4 @@
         <PackageReference Include="Toolbelt.Blazor.FileDropZone" Version="2.1.1" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Folder Include="Components\Pages\GameSaves\" />
-      <Folder Include="Components\Shared\GameSaves\" />
-    </ItemGroup>
-
 </Project>

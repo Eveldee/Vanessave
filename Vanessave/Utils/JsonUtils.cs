@@ -25,10 +25,19 @@ public static class JsonUtils
     {
         return JsonSerializer.Serialize(settings, SaveOptions);
     }
+    public static string WriteSave(GameSave gameSave)
+    {
+        return JsonSerializer.Serialize(gameSave, SaveOptions);
+    }
 
     public static SystemSettings? LoadSystemSettings(string settings)
     {
         return JsonSerializer.Deserialize<SystemSettings>(settings, SaveOptions);
+    }
+
+    public static GameSave? LoadGameSave(string settings)
+    {
+        return JsonSerializer.Deserialize<GameSave>(settings, SaveOptions);
     }
 
     public static string Prettify(string minimizedJson)

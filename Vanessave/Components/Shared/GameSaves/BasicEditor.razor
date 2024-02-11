@@ -1,0 +1,27 @@
+﻿@using Vanessave.Nobeta
+
+<MudStack Spacing="2">
+    <MudNumericField @bind-Value="@GameSave.Basic.DataIndex" Min="1" Max="9" Label="Save Slot"/>
+    <MudSelect T="GameDifficulty" @bind-Value="@GameSave.Basic.Difficulty" Label="Difficulty">
+        @foreach (var value in Enum.GetValues<GameDifficulty>())
+        {
+            <MudSelectItem Value="value"/>
+        }
+    </MudSelect>
+    <MudSelect T="GameStageIndex" @bind-Value="@GameSave.Basic.Stage" Label="Stage">
+        @foreach (var value in Enum.GetValues<GameStageIndex>())
+        {
+            <MudSelectItem Value="value"/>
+        }
+    </MudSelect>
+    <MudNumericField @bind-Value="@GameSave.Basic.SavePoint" Label="Save Point"/>
+    <MudCheckBox @bind-Value="@GameSave.Basic.ShowTeleportMenu" Label="Show Teleport Menu" Color="Color.Primary" Class="ml-n4"/>
+    <MudNumericField @bind-Value="@GameSave.Basic.TimeStamp" Label="Timestamp"/>
+    <MudNumericField @bind-Value="@GameSave.Basic.GamingTime" Label="Gaming Time"/>
+    <MudNumericField @bind-Value="@GameSave.Basic.GameCleared" Label="Game Cleared (NG+ Count)"/>
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired]
+    public GameSave GameSave { get; set; } = null!;
+}
