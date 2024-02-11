@@ -1,4 +1,3 @@
-using HighlightBlazor;
 using Vanessave.Components;
 using MudBlazor.Services;
 using Vanessave.Services;
@@ -14,7 +13,6 @@ builder.Services.AddMudServices(configuration =>
     configuration.SnackbarConfiguration.ClearAfterNavigation = true;
     configuration.SnackbarConfiguration.PreventDuplicates = false;
 });
-builder.Services.AddHighlight();
 
 builder.Services.AddSingleton<SaveCipherProvider>();
 builder.Services.AddSingleton<AchievementMetadataProvider>();

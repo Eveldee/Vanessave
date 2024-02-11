@@ -15,7 +15,6 @@
 <MudPaper Class="mt-4" Outlined="true" MinHeight="400px">
     @if (!string.IsNullOrWhiteSpace(_jsonSave))
     {
-        @* <CodeHighlight Indent="false" CodeLanguage="json" Code="@_jsonSave"/> *@
         <div>
             <StandaloneCodeEditor @ref="_monacoEditor" Id="extractor-packer-editor" ConstructionOptions="ConstructionOptions"/>
         </div>
