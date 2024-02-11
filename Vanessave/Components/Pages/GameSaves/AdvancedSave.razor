@@ -1,0 +1,28 @@
+﻿@page "/game-saves/advanced"
+@using Vanessave.Nobeta
+@using Position = MudBlazor.Position
+
+<MudText Typo="Typo.h3" Class="mb-6">Advanced Editor</MudText>
+
+<GameSaveEditor @ref="_gameSaveEditor">
+    <TitleContent>
+        <pre><MudText>
+        <MudAlert Severity="Severity.Info" Class="mt-4">A restart of the save is needed for the changes to take effect.</MudAlert>
+        </MudText></pre>
+
+        <MudText Class="mt-4">This tool allows you to modify any property in a save. This is an aggregation of all the other tools in one page to avoid having to re-upload the save for each tool.</MudText>
+    </TitleContent>
+    <LoadedContent>
+        <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true" PanelClass="pa-6" ApplyEffectsToContainer="true">
+            <MudTabPanel Icon="@Icons.Material.Filled.Edit" Text="General">
+                <BasicEditor GameSave="GameSave"/>
+            </MudTabPanel>
+        </MudTabs>
+    </LoadedContent>
+</GameSaveEditor>
+
+@code {
+    private GameSave GameSave => _gameSaveEditor.GameSave!;
+
+    private GameSaveEditor _gameSaveEditor = null!;
+}
