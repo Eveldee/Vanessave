@@ -1,0 +1,33 @@
+﻿@page "/system-settings/stats"
+@using Vanessave.Nobeta
+
+<MudText Typo="Typo.h3" Class="mb-6">Stats</MudText>
+
+<SystemSettingsEditor @ref="_systemSettingsEditor">
+    <TitleContent>
+        <pre><MudText>
+        <MudAlert Severity="Severity.Info" Class="mt-4">A restart of the game is needed for the changes to take effect.</MudAlert>
+        </MudText></pre>
+
+        <MudText Class="mt-4">This tool allows you to modify general game stats.</MudText>
+
+    </TitleContent>
+    <LoadedContent>
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudStack Spacing="2">
+                <MudNumericField @bind-Value="@SystemSettings.GameCleared" Label="Game Cleared (at least 1 to unlock Trial Tower)" />
+                <MudNumericField @bind-Value="@SystemSettings.SpeedSpellcasting" Label="Speed Spell Casting" />
+                <MudNumericField @bind-Value="@SystemSettings.MeleeSpellcasting" Label="Melee Spell Casting" />
+                <MudNumericField @bind-Value="@SystemSettings.ManaAbsorbed" Label="Mana Absorbed" />
+                <MudNumericField @bind-Value="@SystemSettings.SoulAcquired" Label="Souls Acquired" />
+                <MudNumericField @bind-Value="@SystemSettings.EnemiesDefeated" Label="Enemies Defeated" />
+            </MudStack>
+        </MudPaper>
+    </LoadedContent>
+</SystemSettingsEditor>
+
+@code {
+    private SystemSettings SystemSettings => _systemSettingsEditor.SystemSettings!;
+
+    private SystemSettingsEditor _systemSettingsEditor = null!;
+}
