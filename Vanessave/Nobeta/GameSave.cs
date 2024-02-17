@@ -34,7 +34,7 @@ public class Stats
     public double CursePercent { get; set; }
     public double CurrentHealthyPoint { get; set; }
     public double CurrentManaPoint { get; set; }
-    public int CurrentMagicIndex { get; set; }
+    public MagicType CurrentMagicIndex { get; set; }
     public int HealthyLevel { get; set; }
     public int ManaLevel { get; set; }
     public int StaminaLevel { get; set; }
