@@ -53,7 +53,7 @@ public class Props
 {
     public int CurrentInventoryIndex { get; set; }
     public int InventorySlots { get; set; }
-    public required int[] CurrentItems { get; set; }
+    public required ItemType[] CurrentItems { get; set; }
     public int TreasureChestCollection { get; set; }
     public required Dictionary<int, bool[]> StageTreasureMap { get; set; }
     public required Dictionary<int, List<SceneItem>> PlayerItemMap { get; set; }

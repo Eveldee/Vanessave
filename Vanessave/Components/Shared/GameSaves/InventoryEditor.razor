@@ -1,0 +1,91 @@
+﻿@using Vanessave.Nobeta
+<MudStack Spacing="2">
+    <MudText Typo="Typo.h5">Current Items</MudText>
+
+    <MudStack Row="true" Spacing="0" Style="user-select: none">
+        @foreach (var slotIndex in Enumerable.Range(0, GameSave.Props.InventorySlots))
+        {
+            <ItemSlot Selected="@(GameSave.Props.CurrentInventoryIndex == slotIndex)" ItemType="GameSave.Props.CurrentItems[slotIndex]" Clicked="() => ItemSelected(slotIndex)"/>
+        }
+    </MudStack>
+    <MudText>Selected slot: @GameSave.Props.CurrentInventoryIndex</MudText>
+    <MudSlider T="int" Variant="Variant.Filled" TickMarks="true" ValueLabel="true" Style="max-width: 400px;" Min="4" Max="8" @bind-Value:get="@GameSave.Props.InventorySlots" @bind-Value:set="@SetCapacity">
+        Inventory capacity: @GameSave.Props.InventorySlots
+    </MudSlider>
+    <MudDivider Class="mt-4 mb-4"/>
+    <MudText Typo="Typo.h5">Set Item</MudText>
+        <MudStack Row="true" Class="flex-wrap" Spacing="10">
+        @foreach (var group in GroupedItems)
+        {
+            <div style="min-width: 252px">
+                <MudText Typo="Typo.h6">@group.Key</MudText>
+                <MudStack Row="true" Spacing="0" Style="user-select: none">
+                    @foreach (var item in group)
+                    {
+                        <ItemSlot Selected="@(item == GameSave.Props.CurrentItems[GameSave.Props.CurrentInventoryIndex])" ItemType="item" Clicked="() => ItemSet(item)"/>
+                    }
+                </MudStack>
+            </div>
+        }
+        </MudStack>
+</MudStack>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public GameSave GameSave { get; set; } = null!;
+
+    private static readonly (string Group, ItemType Type)[] AvailableItems =
+    {
+        ("None", ItemType.Null),
+
+        ("Cursed", ItemType.HPCurse),
+        ("Cursed", ItemType.MPCurse),
+
+        ("Health", ItemType.HPCure),
+        ("Health", ItemType.HPCureM),
+        ("Health", ItemType.HPCureB),
+
+        ("Mana", ItemType.MPCure),
+        ("Mana", ItemType.MPCureM),
+        ("Mana", ItemType.MPCureB),
+
+        ("Defense", ItemType.Defense),
+        ("Defense", ItemType.DefenseM),
+        ("Defense", ItemType.DefenseB),
+
+        ("Holy", ItemType.Holy),
+        ("Holy", ItemType.HolyM),
+        ("Holy", ItemType.HolyB),
+
+        ("Arcane", ItemType.Mysterious),
+        ("Arcane", ItemType.MysteriousM),
+        ("Arcane", ItemType.MysteriousB)
+    };
+
+    private static readonly IGrouping<string, ItemType>[] GroupedItems = AvailableItems
+        .GroupBy(item => item.Group, item => item.Type)
+        .ToArray();
+
+    private void ItemSelected(int slotIndex)
+    {
+        GameSave.Props.CurrentInventoryIndex = slotIndex;
+    }
+
+    private void ItemSet(ItemType item)
+    {
+        GameSave.Props.CurrentItems[GameSave.Props.CurrentInventoryIndex] = item;
+    }
+
+    private void SetCapacity(int newCapacity)
+    {
+        // Selected item is not available anymore
+        if (GameSave.Props.CurrentInventoryIndex >= newCapacity)
+        {
+            GameSave.Props.CurrentInventoryIndex = 0;
+        }
+
+        GameSave.Props.InventorySlots = newCapacity;
+    }
+}
+

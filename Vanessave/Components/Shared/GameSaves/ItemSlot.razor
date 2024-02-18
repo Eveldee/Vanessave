@@ -1,0 +1,34 @@
+﻿@using Vanessave.Nobeta
+
+<div class="relative" style="cursor: pointer" @onclick="OnClick">
+    @* Background *@
+    <div>
+        <MudImage Fluid="true" Width="76" Src="@(Selected ? ItemBackgroundSelected : ItemBackground)" />
+    </div>
+    @* Item *@
+    <div class="absolute z-10" style="top: 5px; left: 5px;">
+        <MudImage Fluid="true" Width="66" Src="@ItemImages[ItemType]" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ItemType ItemType { get; set; } = ItemType.Null;
+
+    [Parameter]
+    public bool Selected { get; set; } = false;
+
+    [Parameter]
+    public EventCallback Clicked { get; set; }
+
+    private const string ItemBackground = "/assets/items/navigation_main_ui_ItemBG.png";
+    private const string ItemBackgroundSelected = "/assets/items/navigation_main_ui_ItemSelected.png";
+
+    private static readonly Dictionary<ItemType, string> ItemImages = Enum.GetValues<ItemType>()
+        .ToDictionary(itemType => itemType, itemType => $"/assets/items/Item_{itemType}.png");
+
+    private Task OnClick()
+    {
+        return Clicked.InvokeAsync();
+    }
+}

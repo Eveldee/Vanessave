@@ -15,9 +15,8 @@ The game will ignore any DLC skin if you don't own the according DLC.</MudAlert>
 
     </TitleContent>
     <LoadedContent>
-
         <MudPaper Outlined="true" Class="pa-4 mt-4" Style="user-select: none;">
-            <MudCarousel Class="mud-width-full" ItemsSource="@_source" @bind-SelectedIndex="@SystemSettings.CurrentSkin" ShowArrows="true" ShowBullets="false" AutoCycle="false" Style="height: 550px;">
+            <MudCarousel Class="mud-width-full" ItemsSource="@Source" @bind-SelectedIndex="@SystemSettings.CurrentSkin" ShowArrows="true" ShowBullets="false" AutoCycle="false" Style="height: 550px;">
                 <ItemTemplate>
                     <div class="d-flex flex-column flex-column justify-center" style="height:100%;">
                         <MudImage Alt="Skin Preview" Src="@context.PreviewUri" Style="width: 400px;" Class="mx-auto"/>
@@ -25,14 +24,14 @@ The game will ignore any DLC skin if you don't own the according DLC.</MudAlert>
                     </div>
                 </ItemTemplate>
             </MudCarousel>
-            <MudPagination @bind-Selected:get="@(SystemSettings.CurrentSkin + 1)" @bind-Selected:set="@(index => SystemSettings.CurrentSkin = index - 1)" Count="@_source.Length" Class="pa-4 justify-center d-flex"/>
+            <MudPagination @bind-Selected:get="@(SystemSettings.CurrentSkin + 1)" @bind-Selected:set="@(index => SystemSettings.CurrentSkin = index - 1)" Count="@Source.Length" Class="pa-4 justify-center d-flex"/>
         </MudPaper>
 
     </LoadedContent>
 </SystemSettingsEditor>
 
 @code {
-    private readonly SkinInfo[] _source = Enum.GetValues<GameSkin>()
+    private static readonly SkinInfo[] Source = Enum.GetValues<GameSkin>()
         .Select(skin => new SkinInfo(skin.Humanize(), $"/assets/skins/Skin_{skin.ToString()}.png"))
         .ToArray();
 
