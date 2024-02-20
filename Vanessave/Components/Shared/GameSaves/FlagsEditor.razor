@@ -1,0 +1,93 @@
+﻿@using Vanessave.Nobeta
+@using Humanizer
+<MudStack Spacing="2">
+    <div id="batch-buttons" class="my-4">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OnEnableAll">Enable all</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" OnClick="OnDisableAll">Disable all</MudButton>
+    </div>
+    <MudTable T="FlagInfo" Items="_flagInfos" GroupBy="GroupDefinition" GroupHeaderStyle="background-color:var(--mud-palette-background-grey)" Hover="true" Style="cursor: pointer; user-select: none;" OnRowClick="OnRowClick">
+        <ColGroup>
+            <col style="width: 50px;" />
+            <col />
+            <col />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Enabled?</MudTh>
+        </HeaderContent>
+        <GroupHeaderTemplate>
+            <MudTh colspan="2" Style="font-weight: bolder; cursor: default">@($"{context.Key}")</MudTh>
+        </GroupHeaderTemplate>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.FriendlyName</MudTd>
+            <MudTd DataLabel="Enabled">
+                <MudCheckBox @bind-Value:get="@GameSave.Flags[context.Flag]" @bind-Value:set="_ => OnFlagChanged(context.Flag)" Color="Color.Primary" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudStack>
+
+@code {
+
+    private static readonly TableGroupDefinition<FlagInfo> GroupDefinition = new()
+    {
+        GroupName = "Stage",
+        Indentation = false,
+        Expandable = true,
+        IsInitiallyExpanded = false,
+        Selector = flagInfo => flagInfo.Group
+    };
+
+    private GameSave _gameSave = null!;
+    [Parameter, EditorRequired]
+    public GameSave GameSave
+    {
+        get => _gameSave;
+        set
+        {
+            _gameSave = value;
+            UpdateFlagInfos();
+        }
+    }
+
+    private FlagInfo[] _flagInfos = Array.Empty<FlagInfo>();
+
+    private void UpdateFlagInfos()
+    {
+        _flagInfos = new FlagInfo[GameSave.Flags.Count];
+        foreach (var (index, flag) in GameSave.Flags.Keys.Select((key, index) => (index, key)))
+        {
+            _flagInfos[index] = new FlagInfo(flag[..7].Humanize(), flag[7..].Humanize(), flag);
+        }
+    }
+
+    private void OnRowClick(TableRowClickEventArgs<FlagInfo> eventArgs)
+    {
+        var keyValuePair = eventArgs.Item;
+
+        OnFlagChanged(keyValuePair.Flag);
+    }
+
+    private void OnFlagChanged(string flag)
+    {
+        GameSave.Flags[flag] = !GameSave.Flags[flag];
+    }
+
+    private void OnEnableAll()
+    {
+        foreach (var flag in GameSave.Flags.Keys)
+        {
+            GameSave.Flags[flag] = true;
+        }
+    }
+
+    private void OnDisableAll()
+    {
+        foreach (var flag in GameSave.Flags.Keys)
+        {
+            GameSave.Flags[flag] = false;
+        }
+    }
+
+    private record FlagInfo(string Group, string FriendlyName, string Flag);
+}

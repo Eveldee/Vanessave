@@ -1,0 +1,25 @@
+﻿@page "/game-saves/flags"
+@using Vanessave.Nobeta
+
+<MudText Typo="Typo.h3" Class="mb-6">Flags</MudText>
+
+<GameSaveEditor @ref="_gameSaveEditor">
+    <TitleContent>
+        <pre><MudText>
+        <MudAlert Severity="Severity.Info" Class="mt-4">A restart of the save is needed for the changes to take effect.</MudAlert>
+        </MudText></pre>
+
+        <MudText Class="mt-4">This tool allows you to manage the game flags. Those flags track state of specific actions like open doors and defeated bosses.</MudText>
+    </TitleContent>
+    <LoadedContent>
+        <MudPaper Outlined="true" Class="pa-4">
+            <FlagsEditor GameSave="GameSave" />
+        </MudPaper>
+    </LoadedContent>
+</GameSaveEditor>
+
+@code {
+    private GameSave GameSave => _gameSaveEditor.GameSave!;
+
+    private GameSaveEditor _gameSaveEditor = null!;
+}

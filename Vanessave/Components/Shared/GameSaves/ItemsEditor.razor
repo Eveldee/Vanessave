@@ -6,11 +6,11 @@
     </div>
     <MudTable T="int" Items="@Enumerable.Range(0, GameSave.Props.PropCollection.Length)" Hover="true" Style="cursor: pointer; user-select: none;" Virtualize="true" Striped="true" OnRowClick="OnRowClick">
         <HeaderContent>
-            <MudTh>Id</MudTh>
+            <MudTh>N°</MudTh>
             <MudTh>Obtained?</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Id">@context</MudTd>
+            <MudTd DataLabel="Id">@(context + 1)</MudTd>
             <MudTd DataLabel="Unlocked">
                 <MudCheckBox @bind-Value:get="@GameSave.Props.PropCollection[context]" @bind-Value:set="_ => OnPropChanged(context)" Color="Color.Primary" />
             </MudTd>
