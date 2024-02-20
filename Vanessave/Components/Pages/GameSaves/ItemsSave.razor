@@ -1,0 +1,25 @@
+﻿@page "/game-saves/items"
+@using Vanessave.Nobeta
+
+<MudText Typo="Typo.h3" Class="mb-6">Items</MudText>
+
+<GameSaveEditor @ref="_gameSaveEditor">
+    <TitleContent>
+        <pre><MudText>
+        <MudAlert Severity="Severity.Info" Class="mt-4">A restart of the save is needed for the changes to take effect.</MudAlert>
+        </MudText></pre>
+
+        <MudText Class="mt-4">This tool allows you to manage the collected lore items.</MudText>
+    </TitleContent>
+    <LoadedContent>
+        <MudPaper Outlined="true" Class="pa-4">
+            <ItemsEditor GameSave="GameSave" />
+        </MudPaper>
+    </LoadedContent>
+</GameSaveEditor>
+
+@code {
+    private GameSave GameSave => _gameSaveEditor.GameSave!;
+
+    private GameSaveEditor _gameSaveEditor = null!;
+}

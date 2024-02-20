@@ -21,7 +21,7 @@ Manually editing achievements doesn't work with Steam. You need to use a tool li
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" OnClick="OnLockAll">Lock all</MudButton>
         </div>
 
-        <MudTable T="Achievement" Items="@SystemSettings.Achievements" Hover="true" Style="cursor: pointer; user-select: none;" OnRowClick="OnRowClick">
+        <MudTable T="Achievement" Items="@SystemSettings.Achievements" Hover="true" Style="cursor: pointer; user-select: none;" Virtualize="true" Striped="true" OnRowClick="OnRowClick">
             <HeaderContent>
                 <MudTh></MudTh>
                 <MudTh>Id</MudTh>

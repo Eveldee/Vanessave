@@ -1,0 +1,58 @@
+﻿@using Vanessave.Nobeta
+<MudStack Spacing="2">
+    <div id="batch-buttons" class="my-4">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OnObtainAll">Obtain all</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" OnClick="OnRemoveAll">Remove all</MudButton>
+    </div>
+    <MudTable T="int" Items="@Enumerable.Range(0, GameSave.Props.PropCollection.Length)" Hover="true" Style="cursor: pointer; user-select: none;" Virtualize="true" Striped="true" OnRowClick="OnRowClick">
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Obtained?</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context</MudTd>
+            <MudTd DataLabel="Unlocked">
+                <MudCheckBox @bind-Value:get="@GameSave.Props.PropCollection[context]" @bind-Value:set="_ => OnPropChanged(context)" Color="Color.Primary" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudStack>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public GameSave GameSave { get; set; } = null!;
+
+    private void OnRowClick(TableRowClickEventArgs<int> eventArgs)
+    {
+        var index = eventArgs.Item;
+
+        OnPropChanged(index);
+    }
+
+    private void OnPropChanged(int index)
+    {
+        GameSave.Props.PropCollection[index] = !GameSave.Props.PropCollection[index];
+
+        // Also write new value to new prop collection (Is it what's written at next save?)
+        GameSave.Props.NewPropCollection[index] = GameSave.Props.PropCollection[index];
+    }
+
+    private void OnObtainAll()
+    {
+        for (var i = 0; i < GameSave.Props.PropCollection.Length; i++)
+        {
+            GameSave.Props.PropCollection[i] = true;
+            GameSave.Props.NewPropCollection[i] = true;
+        }
+    }
+
+    private void OnRemoveAll()
+    {
+        for (var i = 0; i < GameSave.Props.PropCollection.Length; i++)
+        {
+            GameSave.Props.PropCollection[i] = false;
+            GameSave.Props.NewPropCollection[i] = false;
+        }
+    }
+}
