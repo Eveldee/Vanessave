@@ -34,7 +34,7 @@ Manually editing achievements doesn't work with Steam. You need to use a tool li
                 </MudTd>
                 <MudTd DataLabel="Id">@context.Id</MudTd>
                 <MudTd DataLabel="Details" Style="user-select: text">
-                    <MudText>@AchievementMetadataProvider.AchievementsMetadata[context.Id].Name</MudText>
+                    <MudText Style="font-weight: bold">@AchievementMetadataProvider.AchievementsMetadata[context.Id].Name</MudText>
                     <MudText>@AchievementMetadataProvider.AchievementsMetadata[context.Id].Description</MudText>
                 </MudTd>
                 <MudTd DataLabel="Unlocked">

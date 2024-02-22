@@ -19,4 +19,9 @@
         <PackageReference Include="Toolbelt.Blazor.FileDropZone" Version="2.1.1" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Folder Include="wwwroot\assets\valuables\" />
+    </ItemGroup>
+
 </Project>

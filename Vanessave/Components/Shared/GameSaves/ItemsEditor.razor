@@ -1,16 +1,39 @@
 ﻿@using Vanessave.Nobeta
+@using Vanessave.Services
+@inject ValuablesMetadataProvider ValuablesMetadataProvider
+
 <MudStack Spacing="2">
     <div id="batch-buttons" class="my-4">
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OnObtainAll">Obtain all</MudButton>
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" OnClick="OnRemoveAll">Remove all</MudButton>
     </div>
     <MudTable T="int" Items="@Enumerable.Range(0, GameSave.Props.PropCollection.Length)" Hover="true" Style="cursor: pointer; user-select: none;" Virtualize="true" Striped="true" OnRowClick="OnRowClick">
+        <ColGroup>
+            <col style="width: 100px;" />
+            <col />
+            <col />
+            <col />
+            <col />
+        </ColGroup>
         <HeaderContent>
+            <MudTh></MudTh>
             <MudTh>N°</MudTh>
+            <MudTh>Details</MudTh>
+            <MudTh>Audio</MudTh>
             <MudTh>Obtained?</MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd DataLabel="">
+                <MudImage Fluid="true" Width="64" Elevation="0" Src="@($"/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].ImageUri}.png")" Class="rounded-lg" />
+            </MudTd>
             <MudTd DataLabel="Id">@(context + 1)</MudTd>
+            <MudTd DataLabel="Details" Style="user-select: text">
+                <MudText Style="font-weight: bold">@ValuablesMetadataProvider.ValuablesMetadata[context + 1].Name</MudText>
+                <MudText>@ValuablesMetadataProvider.ValuablesMetadata[context + 1].Description</MudText>
+            </MudTd>
+            <MudTd DataLabel="Audio">
+                <audio controls preload="metadata" src="@($"/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].AudioUri}.wav")">Test</audio>
+            </MudTd>
             <MudTd DataLabel="Unlocked">
                 <MudCheckBox @bind-Value:get="@GameSave.Props.PropCollection[context]" @bind-Value:set="_ => OnPropChanged(context)" Color="Color.Primary" />
             </MudTd>

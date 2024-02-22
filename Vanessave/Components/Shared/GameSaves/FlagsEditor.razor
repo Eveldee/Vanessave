@@ -38,19 +38,15 @@
         Selector = flagInfo => flagInfo.Group
     };
 
-    private GameSave _gameSave = null!;
     [Parameter, EditorRequired]
-    public GameSave GameSave
-    {
-        get => _gameSave;
-        set
-        {
-            _gameSave = value;
-            UpdateFlagInfos();
-        }
-    }
+    public GameSave GameSave { get; set; } = null!;
 
     private FlagInfo[] _flagInfos = Array.Empty<FlagInfo>();
+
+    protected override void OnParametersSet()
+    {
+        UpdateFlagInfos();
+    }
 
     private void UpdateFlagInfos()
     {
