@@ -21,11 +21,11 @@
     [Parameter]
     public EventCallback Clicked { get; set; }
 
-    private const string ItemBackground = "/assets/items/navigation_main_ui_ItemBG.png";
-    private const string ItemBackgroundSelected = "/assets/items/navigation_main_ui_ItemSelected.png";
+    private const string ItemBackground = "/assets/items/navigation_main_ui_ItemBG.webp";
+    private const string ItemBackgroundSelected = "/assets/items/navigation_main_ui_ItemSelected.webp";
 
     private static readonly Dictionary<ItemType, string> ItemImages = Enum.GetValues<ItemType>()
-        .ToDictionary(itemType => itemType, itemType => $"/assets/items/Item_{itemType}.png");
+        .ToDictionary(itemType => itemType, itemType => $"/assets/items/Item_{itemType}.webp");
 
     private Task OnClick()
     {

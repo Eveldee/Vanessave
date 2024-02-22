@@ -32,7 +32,7 @@ The game will ignore any DLC skin if you don't own the according DLC.</MudAlert>
 
 @code {
     private static readonly SkinInfo[] Source = Enum.GetValues<GameSkin>()
-        .Select(skin => new SkinInfo(skin.Humanize(), $"/assets/skins/Skin_{skin.ToString()}.png"))
+        .Select(skin => new SkinInfo(skin.Humanize(), $"/assets/skins/Skin_{skin.ToString()}.webp"))
         .ToArray();
 
     private SystemSettings SystemSettings => _systemSettingsEditor.SystemSettings!;
