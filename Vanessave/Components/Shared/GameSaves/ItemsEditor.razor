@@ -32,7 +32,7 @@
                 <MudText>@ValuablesMetadataProvider.ValuablesMetadata[context + 1].Description</MudText>
             </MudTd>
             <MudTd DataLabel="Audio">
-                <audio controls preload="metadata" src="@($"/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].AudioUri}.wav")">Test</audio>
+                <audio controls preload="metadata" src="@($"/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].AudioUri}.ogg")">Test</audio>
             </MudTd>
             <MudTd DataLabel="Unlocked">
                 <MudCheckBox @bind-Value:get="@GameSave.Props.PropCollection[context]" @bind-Value:set="_ => OnPropChanged(context)" Color="Color.Primary" />
