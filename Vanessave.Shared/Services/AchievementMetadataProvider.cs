@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Vanessave.Services;
+namespace Vanessave.Shared.Services;
 
 public class AchievementMetadataProvider
 {

@@ -1,4 +1,4 @@
-﻿namespace Vanessave.Nobeta;
+﻿namespace Vanessave.Shared.Nobeta;
 
 public enum MagicType
 {

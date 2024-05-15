@@ -1,8 +1,10 @@
-﻿using System.Security.Cryptography;
+﻿using System.Runtime.Versioning;
+using System.Security.Cryptography;
 using System.Text;
 
-namespace Vanessave.Services;
+namespace Vanessave.Shared.Services;
 
+[UnsupportedOSPlatform("browser")]
 public class SaveCipherProvider : IDisposable
 {
     public const string Key = "vckiTpRHOzjVf+5/+d9EIw==";

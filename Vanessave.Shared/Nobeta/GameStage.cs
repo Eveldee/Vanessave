@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Vanessave.Nobeta;
+namespace Vanessave.Shared.Nobeta;
 
 // Used for save point map
 [JsonConverter(typeof(JsonStringEnumConverter))]

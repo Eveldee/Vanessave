@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Vanessave.Nobeta;
+namespace Vanessave.Shared.Nobeta;
 
 public class GameSave
 {

@@ -1,6 +1,6 @@
 ﻿@page "/system-settings/skin-selector"
-@using Vanessave.Nobeta
 @using Humanizer
+@using Vanessave.Shared.Nobeta
 
 <MudText Typo="Typo.h3" Class="mb-6">Skin Selector</MudText>
 
@@ -32,7 +32,7 @@ The game will ignore any DLC skin if you don't own the according DLC.</MudAlert>
 
 @code {
     private static readonly SkinInfo[] Source = Enum.GetValues<GameSkin>()
-        .Select(skin => new SkinInfo(skin.Humanize(), $"/assets/skins/Skin_{skin.ToString()}.webp"))
+        .Select(skin => new SkinInfo(skin.Humanize(), $"_content/Vanessave.Shared/assets/skins/Skin_{skin.ToString()}.webp"))
         .ToArray();
 
     private SystemSettings SystemSettings => _systemSettingsEditor.SystemSettings!;

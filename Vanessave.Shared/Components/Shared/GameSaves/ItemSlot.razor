@@ -1,5 +1,4 @@
-﻿@using Vanessave.Nobeta
-
+﻿@using Vanessave.Shared.Nobeta
 <div class="relative" style="cursor: pointer" @onclick="OnClick">
     @* Background *@
     <div>
@@ -21,11 +20,11 @@
     [Parameter]
     public EventCallback Clicked { get; set; }
 
-    private const string ItemBackground = "/assets/items/navigation_main_ui_ItemBG.webp";
-    private const string ItemBackgroundSelected = "/assets/items/navigation_main_ui_ItemSelected.webp";
+    private const string ItemBackground = "_content/Vanessave.Shared/assets/items/navigation_main_ui_ItemBG.webp";
+    private const string ItemBackgroundSelected = "_content/Vanessave.Shared/assets/items/navigation_main_ui_ItemSelected.webp";
 
     private static readonly Dictionary<ItemType, string> ItemImages = Enum.GetValues<ItemType>()
-        .ToDictionary(itemType => itemType, itemType => $"/assets/items/Item_{itemType}.webp");
+        .ToDictionary(itemType => itemType, itemType => $"_content/Vanessave.Shared/assets/items/Item_{itemType}.webp");
 
     private Task OnClick()
     {

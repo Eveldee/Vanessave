@@ -1,6 +1,6 @@
 using Vanessave.Components;
 using MudBlazor.Services;
-using Vanessave.Services;
+using Vanessave.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,5 +1,5 @@
-﻿@using Vanessave.Nobeta
-@using Vanessave.Services
+﻿@using Vanessave.Shared.Nobeta
+@using Vanessave.Shared.Services
 @inject ValuablesMetadataProvider ValuablesMetadataProvider
 
 <MudStack Spacing="2">
@@ -24,7 +24,7 @@
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="">
-                <MudImage Fluid="true" Width="64" Elevation="0" Src="@($"/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].ImageUri}.webp")" Class="rounded-lg" />
+                <MudImage Fluid="true" Width="64" Elevation="0" Src="@($"_content/Vanessave.Shared/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].ImageUri}.webp")" Class="rounded-lg" />
             </MudTd>
             <MudTd DataLabel="Id">@(context + 1)</MudTd>
             <MudTd DataLabel="Details" Style="user-select: text">
@@ -32,7 +32,7 @@
                 <MudText>@ValuablesMetadataProvider.ValuablesMetadata[context + 1].Description</MudText>
             </MudTd>
             <MudTd DataLabel="Audio">
-                <audio controls preload="metadata" src="@($"/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].AudioUri}.ogg")">Test</audio>
+                <audio controls preload="metadata" src="@($"_content/Vanessave.Shared/assets/valuables/{ValuablesMetadataProvider.ValuablesMetadata[context + 1].AudioUri}.ogg")">Test</audio>
             </MudTd>
             <MudTd DataLabel="Unlocked">
                 <MudCheckBox @bind-Value:get="@GameSave.Props.PropCollection[context]" @bind-Value:set="_ => OnPropChanged(context)" Color="Color.Primary" />
