@@ -1,0 +1,47 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<MyMudThemeProvider/>
+<MyMudProviders/>
+
+<PageTitle>Vanessave</PageTitle>
+
+<div class="page mud-layout">
+
+    <div class="sidebar mud-elevation-1">
+        <div class="top-row mud-drawer-head">
+            <div>
+                <a class="navbar-brand" href="@Navigation.BaseUri">Vanessave</a>
+            </div>
+        </div>
+
+        <input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
+        <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+            <NavMenu/>
+        </div>
+
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="color: white;" Link="https://github.com/Eveldee/Vanessave" Target="_blank"/>
+        </div>
+
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-2 pt-2">
+            <MudScrollToTop>
+                <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+            </MudScrollToTop>
+            @Body
+        </MudContainer>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+
+}

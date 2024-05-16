@@ -1,6 +1,7 @@
 using Vanessave.Components;
 using MudBlazor.Services;
 using Vanessave.Shared.Services;
+using Vanessave.Shared.Utils.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,7 @@ builder.Services.AddMudServices(configuration =>
     configuration.SnackbarConfiguration.PreventDuplicates = false;
 });
 
-builder.Services.AddSingleton<SaveCipherProvider>();
-builder.Services.AddSingleton<AchievementMetadataProvider>();
-builder.Services.AddSingleton<ValuablesMetadataProvider>();
+builder.Services.AddVanessaveServices();
 
 var app = builder.Build();
 

@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
 using Photino.Blazor;
+using Vanessave.Desktop.Components;
+using Vanessave.Shared.Utils.Extensions;
 
 namespace Vanessave.Desktop;
 
@@ -9,15 +12,23 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
+        var builder = PhotinoBlazorAppBuilder.CreateDefault(args);
 
-        appBuilder.Services
+        builder.Services
             .AddLogging();
 
-        // Register root component
-        appBuilder.RootComponents.Add<App>("app");
+        builder.Services.AddMudServices(configuration =>
+        {
+            configuration.SnackbarConfiguration.ClearAfterNavigation = true;
+            configuration.SnackbarConfiguration.PreventDuplicates = false;
+        });
 
-        var app = appBuilder.Build();
+        builder.Services.AddVanessaveServices();
+
+        // Register root component
+        builder.RootComponents.Add<App>("app");
+
+        var app = builder.Build();
 
         // Customize window
         app.MainWindow

@@ -20,7 +20,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="MudBlazor" Version="6.19.1" />
 	  <PackageReference Include="Photino.Blazor" Version="2.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Vanessave.Shared\Vanessave.Shared.csproj" />
 	</ItemGroup>
 
 </Project>
