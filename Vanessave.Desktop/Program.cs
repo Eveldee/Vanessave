@@ -1,45 +1,14 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
-using Photino.Blazor;
-using Vanessave.Desktop.Components;
+﻿using Microsoft.Extensions.Hosting;
+using Vanessave.Desktop.Utils.Extensions;
 using Vanessave.Shared.Utils.Extensions;
 
-namespace Vanessave.Desktop;
+var builder = Host.CreateApplicationBuilder(args);
 
-internal static class Program
-{
-    [STAThread]
-    public static void Main(string[] args)
-    {
-        var builder = PhotinoBlazorAppBuilder.CreateDefault(args);
+builder.Services.AddVanessaveServices();
 
-        builder.Services
-            .AddLogging();
+// Photino blazor in generic host
+builder.UsePhotinoBlazorLifetime();
 
-        builder.Services.AddMudServices(configuration =>
-        {
-            configuration.SnackbarConfiguration.ClearAfterNavigation = true;
-            configuration.SnackbarConfiguration.PreventDuplicates = false;
-        });
+var host = builder.Build();
 
-        builder.Services.AddVanessaveServices();
-
-        // Register root component
-        builder.RootComponents.Add<App>("app");
-
-        var app = builder.Build();
-
-        // Customize window
-        app.MainWindow
-            .SetIconFile("favicon.ico")
-            .SetTitle("Vanessave");
-
-        AppDomain.CurrentDomain.UnhandledException += (_, error) =>
-        {
-            app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
-        };
-
-        app.Run();
-    }
-}
+host.Run();

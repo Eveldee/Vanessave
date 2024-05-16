@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Logging
+@inject  ILogger<HomePage> Logger
 
 <MudText Typo="Typo.h2" Class="mb-6">Welcome to <span class="mud-secondary-text">Vanessave</span>!</MudText>
 
@@ -19,3 +21,12 @@ After using each tool, you need to replace the original save or settings file wi
 You can find the <code>GameFolder</code> by going in your steam library, right click on Little Witch Nobeta 🢒 manage 🢒 browse local files.</MudAlert>
 </MudText>
 </pre>
+
+@code {
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Logger.LogInformation("OnAfterRender");
+    }
+
+}
