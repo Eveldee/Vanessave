@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vanessave", "Vanessave\Vane
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vanessave.Shared", "Vanessave.Shared\Vanessave.Shared.csproj", "{47F9EA08-97E0-4161-A688-C118EE582A9D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vanessave.Desktop", "Vanessave.Desktop\Vanessave.Desktop.csproj", "{A67BC46A-602E-417A-964B-A2C7ADF3B3A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{47F9EA08-97E0-4161-A688-C118EE582A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47F9EA08-97E0-4161-A688-C118EE582A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47F9EA08-97E0-4161-A688-C118EE582A9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A67BC46A-602E-417A-964B-A2C7ADF3B3A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A67BC46A-602E-417A-964B-A2C7ADF3B3A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A67BC46A-602E-417A-964B-A2C7ADF3B3A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A67BC46A-602E-417A-964B-A2C7ADF3B3A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
