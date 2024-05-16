@@ -1,0 +1,34 @@
+﻿@using BlazorMonaco.Editor
+
+<div>
+    <StandaloneCodeEditor @ref="_monacoEditor" Id="extractor-packer-editor" ConstructionOptions="ConstructionOptions"/>
+</div>
+
+@code {
+
+    private StandaloneCodeEditor _monacoEditor = null!;
+
+    [Parameter, EditorRequired]
+    public string InitialJson { get; set; } = null!;
+
+    public Task<string> GetJson() => _monacoEditor.GetValue();
+
+    public async Task SetJson(string jsonText)
+    {
+        await _monacoEditor.SetValue(jsonText);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private StandaloneEditorConstructionOptions ConstructionOptions(StandaloneCodeEditor arg)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "json",
+            Theme = "vs-dark",
+            Value = InitialJson
+        };
+    }
+
+}

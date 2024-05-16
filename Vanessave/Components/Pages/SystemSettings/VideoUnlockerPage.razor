@@ -15,11 +15,7 @@
     </TitleContent>
     <LoadedContent>
         <MudPaper Outlined="true">
-            <MudCheckBox @bind-Value="@SystemSettings.AllTaniaPropsUnlocked" Label="Tania" Color="Color.Primary"/>
-            <MudCheckBox @bind-Value="@SystemSettings.AllMonicaPropsUnlocked" Label="Monica" Color="Color.Primary"/>
-            <MudCheckBox @bind-Value="@SystemSettings.AllVanessaPropsUnlock" Label="Vanessa" Color="Color.Primary"/>
-            <MudCheckBox @bind-Value="@SystemSettings.AllCatPropsUnlock" Label="Cat" Color="Color.Primary"/>
-            <MudCheckBox @bind-Value="@SystemSettings.AllNobetaPropsUnlock" Label="Nobeta" Color="Color.Primary"/>
+            <VideoUnlocker SystemSettings="SystemSettings"/>
         </MudPaper>
     </LoadedContent>
 </SystemSettingsEditor>

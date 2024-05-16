@@ -1,0 +1,15 @@
+﻿@using Vanessave.Shared.Nobeta
+
+<MudStack Spacing="2">
+    <MudNumericField @bind-Value="@SystemSettings.GameCleared" Label="Game Cleared (at least 1 to unlock Trial Tower)"/>
+    <MudNumericField @bind-Value="@SystemSettings.SpeedSpellcasting" Label="Speed Spell Casting"/>
+    <MudNumericField @bind-Value="@SystemSettings.MeleeSpellcasting" Label="Melee Spell Casting"/>
+    <MudNumericField @bind-Value="@SystemSettings.ManaAbsorbed" Label="Mana Absorbed"/>
+    <MudNumericField @bind-Value="@SystemSettings.SoulAcquired" Label="Souls Acquired"/>
+    <MudNumericField @bind-Value="@SystemSettings.EnemiesDefeated" Label="Enemies Defeated"/>
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired]
+    public SystemSettings SystemSettings { get; set; } = null!;
+};

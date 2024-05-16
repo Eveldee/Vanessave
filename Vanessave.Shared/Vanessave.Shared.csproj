@@ -12,18 +12,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="BlazorMonaco" Version="3.2.0" />
         <PackageReference Include="Humanizer" Version="2.14.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.5" />
         <PackageReference Include="MudBlazor" Version="6.19.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Components\Shared\GameSaves\BasicEditor.razor" />
-      <AdditionalFiles Include="Components\Shared\GameSaves\FlagsEditor.razor" />
-      <AdditionalFiles Include="Components\Shared\GameSaves\InventoryEditor.razor" />
-      <AdditionalFiles Include="Components\Shared\GameSaves\ItemsEditor.razor" />
-      <AdditionalFiles Include="Components\Shared\GameSaves\ItemSlot.razor" />
-      <AdditionalFiles Include="Components\Shared\GameSaves\StatsEditor.razor" />
     </ItemGroup>
 
     <ItemGroup>

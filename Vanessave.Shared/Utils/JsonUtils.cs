@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Vanessave.Shared.Nobeta;
 
-namespace Vanessave.Utils;
+namespace Vanessave.Shared.Utils;
 
 public static class JsonUtils
 {

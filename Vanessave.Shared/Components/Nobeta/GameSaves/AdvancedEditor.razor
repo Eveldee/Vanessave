@@ -1,0 +1,25 @@
+﻿@using Vanessave.Shared.Nobeta
+@using Position = MudBlazor.Position
+
+<MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true" Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true">
+    <MudTabPanel Icon="@Icons.Material.Filled.Edit" Text="General">
+        <BasicEditor GameSave="GameSave"/>
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Material.Filled.Assessment" Text="Magic and Stats">
+        <StatsEditor GameSave="GameSave"/>
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Material.Filled.Dataset" Text="Inventory">
+        <InventoryEditor GameSave="GameSave"/>
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Material.Filled.DataArray" Text="Items">
+        <ItemsEditor GameSave="GameSave"/>
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Material.Filled.Flag" Text="Flags">
+        <FlagsEditor GameSave="GameSave"/>
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    [Parameter, EditorRequired]
+    public GameSave GameSave { get; set; } = null!;
+}

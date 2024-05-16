@@ -1,0 +1,28 @@
+﻿@using Humanizer
+@using Vanessave.Shared.Nobeta
+
+<div style="user-select: none">
+    <MudCarousel Class="mud-width-full" ItemsSource="@Source" @bind-SelectedIndex="@SystemSettings.CurrentSkin" ShowArrows="true" ShowBullets="false" AutoCycle="false" Style="height: 550px;">
+        <ItemTemplate>
+            <div class="d-flex flex-column flex-column justify-center" style="height:100%;">
+                <MudImage Alt="Skin Preview" Src="@context.PreviewUri" Style="width: 400px;" Class="mx-auto"/>
+                <MudText Align="@Align.Center" Class="mx-auto">@context.SkinName</MudText>
+            </div>
+        </ItemTemplate>
+    </MudCarousel>
+    <MudPagination @bind-Selected:get="@(SystemSettings.CurrentSkin + 1)" @bind-Selected:set="@(index => SystemSettings.CurrentSkin = index - 1)" Count="@Source.Length" Class="pa-4 justify-center d-flex"/>
+</div>
+
+@code {
+
+    private static readonly SkinInfo[] Source = Enum
+        .GetValues<GameSkin>()
+        .Select(skin => new SkinInfo(skin.Humanize(), $"_content/Vanessave.Shared/assets/skins/Skin_{skin.ToString()}.webp"))
+        .ToArray();
+
+    [Parameter, EditorRequired]
+    public SystemSettings SystemSettings { get; set; } = null!;
+
+    private record SkinInfo(string SkinName, string PreviewUri);
+
+}

@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace Vanessave.Utils.Extensions;
+namespace Vanessave.Shared.Utils.Extensions;
 
 public static class SnackbarExtensions
 {

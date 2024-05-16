@@ -1,0 +1,27 @@
+﻿@page "/system-settings/skin-selector"
+@using Vanessave.Shared.Nobeta
+
+<MudText Typo="Typo.h3" Class="mb-6">Skin Selector</MudText>
+
+<SystemSettingsEditor @ref="_systemSettingsEditor" HideDividerWhenLoaded="true">
+    <TitleContent>
+
+        <pre><MudText>
+<MudAlert Severity="Severity.Info" Class="mt-4">A restart of the game is needed in order to apply the new selected skin.
+
+The game will ignore any DLC skin if you don't own the according DLC.</MudAlert>
+        </MudText></pre>
+
+    </TitleContent>
+    <LoadedContent>
+        <MudPaper Outlined="true" Class="pa-4 mt-4">
+            <SkinSelector SystemSettings="SystemSettings"/>
+        </MudPaper>
+    </LoadedContent>
+</SystemSettingsEditor>
+
+@code {
+    private SystemSettings SystemSettings => _systemSettingsEditor.SystemSettings!;
+
+    private SystemSettingsEditor _systemSettingsEditor = null!;
+}
