@@ -1,0 +1,28 @@
+* {
+    text-wrap: wrap;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+header.mud-appbar {
+    flex: initial;
+}
+
+#main-tab-bar {
+    flex: auto;
+}
+
+#main-tab-bar > .mud-tabs {
+    height: 100%;
+}

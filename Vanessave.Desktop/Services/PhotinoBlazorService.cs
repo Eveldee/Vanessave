@@ -35,6 +35,7 @@ public class PhotinoBlazorService : IHostedService
 
         _photinoThread = new Thread(PhotinoUiThread);
 
+        // STAThread is needed on Windows to communicate with Edge WebView2 (COM)
         if (OperatingSystem.IsWindows())
         {
             _photinoThread.SetApartmentState(ApartmentState.STA);
@@ -66,6 +67,7 @@ public class PhotinoBlazorService : IHostedService
 
         // Customize window
         _app.MainWindow
+            .SetMaximized(true)
             .SetIconFile("favicon.ico")
             .SetTitle("Vanessave");
 

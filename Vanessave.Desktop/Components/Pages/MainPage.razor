@@ -1,0 +1,45 @@
+﻿@page "/"
+@using Vanessave.Desktop.Models
+@using Vanessave.Desktop.Services
+@implements IDisposable
+@inject TabBarService TabBarService
+
+<div id="main-tab-bar">
+    <MudTabs @bind-ActivePanelIndex="@TabBarService.ActiveIndex"
+             Elevation="2" Border="true" Outlined="true" PanelClass="px-4 py-6">
+        <ChildContent>
+            @foreach (var item in TabBarService.TabViews)
+            {
+                <MudTabPanel ID="@item" Text="@item.Name" Tag="@item" Icon="@item.Icon">
+                    <MudContainer MaxWidth="MaxWidth.Large">
+                        @item.Content
+                    </MudContainer>
+                </MudTabPanel>
+            }
+        </ChildContent>
+        <Header>
+            @* Tab bar header (global content) *@
+        </Header>
+        <TabPanelHeader>
+            @* Tab panel hader (per tab content) *@
+            @if (context.Tag is TabView { Closeable: true } tabView)
+            {
+                <MudIconButton Class="ml-2 pa-1" Color="Color.Inherit" Icon="@Icons.Material.Filled.Close" OnClick="_ => TabBarService.Close(tabView)"/>
+            }
+        </TabPanelHeader>
+    </MudTabs>
+</div>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        TabBarService.TabBarUpdated += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        TabBarService.TabBarUpdated -= StateHasChanged;
+    }
+
+}
