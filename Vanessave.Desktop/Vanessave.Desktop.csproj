@@ -22,6 +22,7 @@
 	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 	  <PackageReference Include="MudBlazor" Version="6.19.1" />
 	  <PackageReference Include="Photino.Blazor" Version="2.7.0" />
+	  <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="4.1.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

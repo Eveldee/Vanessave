@@ -1,8 +1,10 @@
-﻿@using Vanessave.Desktop.Services
+﻿@using Toolbelt.Blazor.HotKeys2
+@using Vanessave.Desktop.Services
 @using Vanessave.Shared.Utils
 @inherits LayoutComponentBase
-@* @implements IDisposable *@
+@implements IDisposable
 @inject TabBarService TabBarService
+@inject HotKeys Hotkeys
 
 <MyMudThemeProvider/>
 <MyMudProviders/>
@@ -37,6 +39,18 @@
 
 @code {
 
+    private HotKeysContext? _hotKeysContext;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _hotKeysContext = Hotkeys.CreateContext()
+                .Add(ModCode.Alt, Code.ArrowLeft, TabBarService.NavigateBack)
+                .Add(ModCode.Alt, Code.ArrowRight, TabBarService.NavigateForward);
+        }
+    }
+
     protected override void OnInitialized()
     {
         TabBarService.TabBarUpdated += StateHasChanged;
@@ -45,6 +59,8 @@
     public void Dispose()
     {
         TabBarService.TabBarUpdated -= StateHasChanged;
+
+        _hotKeysContext?.Dispose();
     }
 
     private static void GithubButtonClick(MouseEventArgs obj)
