@@ -71,20 +71,6 @@ public class TabBarService
             Closeable: false,
             Icon: Icons.Material.Filled.Class
         ));
-
-        _tabViews.Add(new TabView(
-            "Named Saves2",
-            builder => builder.AddSimpleComponent<NamedSavesPage>(),
-            Closeable: false,
-            Icon: Icons.Material.Filled.Class
-        ));
-
-        _tabViews.Add(new TabView(
-            "Named Saves3",
-            builder => builder.AddSimpleComponent<NamedSavesPage>(),
-            Closeable: false,
-            Icon: Icons.Material.Filled.Class
-        ));
     }
 
     public void NavigateBack()

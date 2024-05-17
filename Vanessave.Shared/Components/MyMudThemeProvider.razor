@@ -1,24 +1,57 @@
-﻿<CascadingValue Value=false Name="UsePopoverProvider">
-    <MudThemeProvider Theme="MyTheme"></MudThemeProvider>
+﻿@using MudBlazor.Utilities
+<CascadingValue Value=false Name="UsePopoverProvider">
+    <MudThemeProvider @ref="_mudThemeProvider" Theme="MyTheme" @bind-IsDarkMode="_isDarkMode"/>
 </CascadingValue>
 
 @code {
+
+    private bool _isDarkMode;
+    private MudThemeProvider _mudThemeProvider = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+
+            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemPreferenceChanged(bool newValue)
+    {
+        _isDarkMode = newValue;
+
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+
+    public static MudColor PrimaryPurpleLight => "#594AE2";
+
+    public static MudColor PrimaryPurpleDark => "#6859f0";
+    public static MudColor SurfaceDark => "#1a1a27";
 
     public static MudTheme MyTheme => new()
     {
         Palette = new PaletteLight
         {
-            Primary = "#594AE2",
+            Primary = PrimaryPurpleLight,
             Secondary = Colors.Red.Accent3,
-            AppbarBackground = "#594AE2",
+            AppbarBackground = PrimaryPurpleLight,
             Tertiary = Colors.Orange.Accent3
         },
         PaletteDark = new PaletteDark
         {
-            Primary = "#594AE2",
-            Secondary = Colors.Red.Accent3,
-            AppbarBackground = "#594AE2",
-            Tertiary = Colors.Orange.Accent3
+            Background = SurfaceDark,
+            Dark = SurfaceDark,
+            Surface = SurfaceDark,
+            Primary = PrimaryPurpleDark,
+            Secondary = Colors.Red.Accent2,
+            AppbarBackground = PrimaryPurpleDark,
+            Tertiary = Colors.Orange.Accent2
         }
     };
 
