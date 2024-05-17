@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 using Vanessave.Desktop.Components.Pages;
@@ -10,20 +11,45 @@ namespace Vanessave.Desktop.Services;
 
 public class TabBarService
 {
+    public const int HomeIndex = 0;
+
     public IEnumerable<TabView> TabViews => _tabViews;
 
-    public int ActiveIndex { get; set; }
+    private int _activeTabIndex;
+
+    public int ActiveIndex
+    {
+        get => _activeTabIndex;
+        set
+        {
+            if (value != _activeTabIndex)
+            {
+                _previousTabsHistory.Push(_activeTabIndex);
+
+                _activeTabIndex = value;
+
+                TabBarUpdated?.Invoke();
+            }
+        }
+    }
+
+    public bool CanNavigateBack => _previousTabsHistory.Count > 0;
+    public bool CanNavigateForward => _nextTabsHistory.Count > 0;
 
     public event Action? TabBarUpdated;
 
     private readonly ILogger<TabBarService> _logger;
     private readonly List<TabView> _tabViews;
+    private readonly Stack<int> _previousTabsHistory;
+    private readonly Stack<int> _nextTabsHistory;
 
     public TabBarService(ILogger<TabBarService> logger)
     {
         _logger = logger;
 
         _tabViews = new List<TabView>();
+        _previousTabsHistory = new Stack<int>();
+        _nextTabsHistory = new Stack<int>();
 
         AddDefaultTabs();
     }
@@ -45,6 +71,52 @@ public class TabBarService
             Closeable: false,
             Icon: Icons.Material.Filled.Class
         ));
+
+        _tabViews.Add(new TabView(
+            "Named Saves2",
+            builder => builder.AddSimpleComponent<NamedSavesPage>(),
+            Closeable: false,
+            Icon: Icons.Material.Filled.Class
+        ));
+
+        _tabViews.Add(new TabView(
+            "Named Saves3",
+            builder => builder.AddSimpleComponent<NamedSavesPage>(),
+            Closeable: false,
+            Icon: Icons.Material.Filled.Class
+        ));
+    }
+
+    public void NavigateBack()
+    {
+        if (_previousTabsHistory.Count > 0)
+        {
+            _nextTabsHistory.Push(_activeTabIndex);
+            _activeTabIndex = _previousTabsHistory.Pop();
+
+            TabBarUpdated?.Invoke();
+        }
+    }
+
+    public void NavigateForward()
+    {
+        if (_nextTabsHistory.Count > 0)
+        {
+            _previousTabsHistory.Push(_activeTabIndex);
+            _activeTabIndex = _nextTabsHistory.Pop();
+
+            TabBarUpdated?.Invoke();
+        }
+    }
+
+    public void NavigateHome()
+    {
+        _activeTabIndex = HomeIndex;
+
+        _previousTabsHistory.Clear();
+        _nextTabsHistory.Clear();
+
+        TabBarUpdated?.Invoke();
     }
 
     public void Close(TabView tabView)

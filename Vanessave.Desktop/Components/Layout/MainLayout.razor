@@ -1,10 +1,8 @@
-﻿@using Vanessave.Desktop.Models
-@using Vanessave.Desktop.Services
+﻿@using Vanessave.Desktop.Services
 @using Vanessave.Shared.Utils
-@using Vanessave.Desktop.Components.Pages
 @inherits LayoutComponentBase
-@inject NavigationManager Navigation
-@inject WorkspacesService WorkspacesService
+@* @implements IDisposable *@
+@inject TabBarService TabBarService
 
 <MyMudThemeProvider/>
 <MyMudProviders/>
@@ -14,8 +12,14 @@
 <div class="page mud-layout">
     <main>
         <MudAppBar Color="Color.Primary" Fixed="false" Elevation="0">
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Inherit" OnClick="BackButtonClick"
+                           Disabled="@(!TabBarService.CanNavigateBack)"/>
             <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" OnClick="HomeButtonClick"/>
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowForward" Color="Color.Inherit" OnClick="ForwardButtonClick"
+                           Disabled="@(!TabBarService.CanNavigateForward)"/>
+
             <MudSpacer/>
+
             <MudText Typo="Typo.h5">Vanessave</MudText>
             <MudSpacer/>
             <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" OnClick="GithubButtonClick"/>
@@ -33,6 +37,16 @@
 
 @code {
 
+    protected override void OnInitialized()
+    {
+        TabBarService.TabBarUpdated += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        TabBarService.TabBarUpdated -= StateHasChanged;
+    }
+
     private static void GithubButtonClick(MouseEventArgs obj)
     {
         ProcessUtils.OpenLinkInBrowser("https://github.com/Eveldee/Vanessave");
@@ -40,7 +54,17 @@
 
     private void HomeButtonClick(MouseEventArgs obj)
     {
-        Navigation.NavigateTo("/");
+        TabBarService.NavigateHome();
+    }
+
+    private void BackButtonClick(MouseEventArgs obj)
+    {
+        TabBarService.NavigateBack();
+    }
+
+    private void ForwardButtonClick(MouseEventArgs obj)
+    {
+        TabBarService.NavigateForward();
     }
 
 }
