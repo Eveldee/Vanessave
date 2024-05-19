@@ -29,13 +29,13 @@ public class WorkspacesService
         _tabBarService = tabBarService;
     }
 
-    public bool Add(ISnackbar snackbar)
+    public Workspace? Add(ISnackbar snackbar)
     {
         var dialogResult = Dialog.FileOpen("exe");
 
         if (!dialogResult.IsOk)
         {
-            return false;
+            return null;
         }
 
         var fileInfo = new FileInfo(dialogResult.Path);
@@ -44,17 +44,23 @@ public class WorkspacesService
         {
             snackbar.AddError("Invalid game installation directory");
 
-            return false;
+            return null;
         }
 
         var workspace = new Workspace(fileInfo.Directory.Name, fileInfo.Directory.FullName);
+
+        // Avoid duplicates
+        if (Settings.Workspaces.Contains(workspace))
+        {
+            return workspace;
+        }
 
         Settings.Workspaces.Add(workspace);
         _settingsProvider.Save(nameof(Settings.Workspaces));
 
         _logger.LogInformation("Added workspace: {Workspace}", workspace);
 
-        return true;
+        return workspace;
     }
 
     public void Open(Workspace workspace)

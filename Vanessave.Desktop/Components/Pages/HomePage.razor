@@ -27,7 +27,7 @@
     <MudPaper Outlined="true" Class="px-5">
         @foreach (var workspace in WorkspacesService.Workspaces)
         {
-            <div class="my-5 workspace" @onclick="() => OpenWorkspaceClick(workspace)">
+            <div class="my-5 workspace" @onclick="() => OpenWorkspace(workspace)">
                 <MudText Color="Color.Secondary">@workspace.Name</MudText>
                 <MudText Typo="Typo.caption">@workspace.Path</MudText>
             </div>
@@ -42,13 +42,15 @@
 
     private async Task AddGameInstallButtonClick()
     {
-        bool success = false;
+        Workspace? workspace = null;
 
-        await Task.Run(() => success = WorkspacesService.Add(Snackbar));
+        await Task.Run(() => workspace = WorkspacesService.Add(Snackbar));
 
-        if (success)
+        if (workspace is not null)
         {
             StateHasChanged();
+
+            OpenWorkspace(workspace);
         }
     }
 
@@ -57,7 +59,7 @@
 
     }
 
-    private void OpenWorkspaceClick(Workspace workspace)
+    private void OpenWorkspace(Workspace workspace)
     {
         WorkspacesService.Open(workspace);
     }
