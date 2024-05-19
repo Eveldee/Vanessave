@@ -1,5 +1,42 @@
-<h3>HomePage</h3>
+<div id="homepage">
+    <MudSpacer />
+
+    <MudStack Row="true" Justify="Justify.SpaceEvenly" Class="mt-10" Style="user-select: none">
+        <MudPaper Class="main-button" Outlined="true" @onclick="AddGameInstallButtonClick">
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudIcon Size="Size.Large" Icon="@Icons.Material.Filled.Add" />
+                <MudText>Add game installation</MudText>
+            </MudStack>
+        </MudPaper>
+        <MudPaper Class="main-button" Outlined="true" @onclick="OpenSaveSettingsButtonClick">
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudIcon Size="Size.Large" Icon="@Icons.Material.Filled.FileOpen" />
+                <MudText>Open save/settings</MudText>
+            </MudStack>
+        </MudPaper>
+    </MudStack>
+
+    <MudDivider Class="ma-10" FlexItem="true" DividerType="DividerType.Middle" />
+
+    <MudText Typo="Typo.h5" Class="ma-3">Game installations</MudText>
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudText>Test</MudText>
+    </MudPaper>
+
+    <MudSpacer />
+    <MudSpacer />
+</div>
 
 @code {
-    
+
+    private void AddGameInstallButtonClick()
+    {
+
+    }
+
+    private void OpenSaveSettingsButtonClick()
+    {
+
+    }
+
 }

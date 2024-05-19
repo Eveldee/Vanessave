@@ -11,7 +11,7 @@
             @foreach (var item in TabBarService.TabViews)
             {
                 <MudTabPanel ID="@item" Text="@item.Name" Tag="@item" Icon="@item.Icon">
-                    <MudContainer MaxWidth="MaxWidth.Large">
+                    <MudContainer MaxWidth="MaxWidth.Large" Style="display: grid;">
                         @item.Content
                     </MudContainer>
                 </MudTabPanel>

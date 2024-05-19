@@ -7,3 +7,7 @@
 main {
     flex: 1;
 }
+
+::deep .mud-toolbar {
+    padding-inline-start: 0;
+}

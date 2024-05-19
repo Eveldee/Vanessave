@@ -1,0 +1,5 @@
+﻿#main-tab-bar ::deep .mud-tabs-panels {
+    flex-grow: 1;
+
+    display: grid;
+}
