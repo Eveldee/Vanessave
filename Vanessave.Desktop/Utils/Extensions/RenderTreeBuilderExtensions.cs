@@ -5,9 +5,18 @@ namespace Vanessave.Desktop.Utils.Extensions;
 
 public static class RenderTreeBuilderExtensions
 {
-    public static void AddSimpleComponent<T>(this RenderTreeBuilder builder) where T : IComponent
+    public static void AddSimpleComponent<TComponent>(this RenderTreeBuilder builder) where TComponent : IComponent
     {
-        builder.OpenComponent<T>(0);
+        builder.OpenComponent<TComponent>(0);
+
+        builder.CloseComponent();
+    }
+
+    public static void AddSimpleComponent<TComponent, TParameter>(this RenderTreeBuilder builder, TParameter parameter) where TComponent : IComponent
+    {
+        builder.OpenComponent<TComponent>(0);
+
+        builder.AddAttribute(0, typeof(TParameter).Name, parameter);
 
         builder.CloseComponent();
     }

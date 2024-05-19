@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MudBlazor;
 using MudBlazor.Services;
 using Photino.Blazor;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Vanessave.Desktop.Components;
 using Vanessave.Shared.Utils.Extensions;
 
@@ -14,6 +16,8 @@ namespace Vanessave.Desktop.Services;
 
 public class PhotinoBlazorService : IHostedService
 {
+    public IServiceProvider ServiceProvider { get; private set; } = null!;
+
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly ServiceCollectionInjector _serviceCollectionInjector;
 
@@ -60,10 +64,23 @@ public class PhotinoBlazorService : IHostedService
             configuration.SnackbarConfiguration.PreventDuplicates = false;
         });
 
+        builder.Services.AddVanessaveServices();
+
+        builder.Services.AddHotKeys2();
+
+        builder.Services.AddSingleton<TabBarService>();
+        builder.Services.AddSingleton<WorkspacesService>();
+        builder.Services.AddSingleton<VanessaveSettingsProvider>();
+
         // Register root component
         builder.RootComponents.Add<App>("app");
 
         _app = builder.Build();
+
+        ServiceProvider = _app.Services;
+
+        // Initialize some services
+        ServiceProvider.GetRequiredService<VanessaveSettingsProvider>();
 
         // Customize window
         _app.MainWindow

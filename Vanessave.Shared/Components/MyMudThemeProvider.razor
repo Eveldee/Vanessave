@@ -30,6 +30,7 @@
     }
 
     public static MudColor PrimaryPurpleLight => "#594AE2";
+    public static MudColor SurfaceLight => "#FFFFFF";
 
     public static MudColor PrimaryPurpleDark => "#6859f0";
     public static MudColor SurfaceDark => "#1a1a27";
@@ -38,9 +39,9 @@
     {
         Palette = new PaletteLight
         {
+            AppbarBackground = PrimaryPurpleLight,
             Primary = PrimaryPurpleLight,
             Secondary = Colors.Red.Accent3,
-            AppbarBackground = PrimaryPurpleLight,
             Tertiary = Colors.Orange.Accent3
         },
         PaletteDark = new PaletteDark
@@ -48,9 +49,10 @@
             Background = SurfaceDark,
             Dark = SurfaceDark,
             Surface = SurfaceDark,
+
+            AppbarBackground = PrimaryPurpleDark,
             Primary = PrimaryPurpleDark,
             Secondary = Colors.Red.Accent2,
-            AppbarBackground = PrimaryPurpleDark,
             Tertiary = Colors.Orange.Accent2
         }
     };

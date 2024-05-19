@@ -1,0 +1,9 @@
+﻿@using Vanessave.Desktop.Models
+<h3>WorkspacePage: @Workspace</h3>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public Workspace Workspace { get; set; } = null!;
+
+}

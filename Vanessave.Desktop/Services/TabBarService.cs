@@ -60,16 +60,16 @@ public class TabBarService
         _tabViews.Add(new TabView(
             "Home",
             builder => builder.AddSimpleComponent<HomePage>(),
-            Closeable: false,
-            Icon: Icons.Material.Filled.Home
+            closeable: false,
+            icon: Icons.Material.Filled.Home
         ));
 
         // NamedSaves tab
         _tabViews.Add(new TabView(
             "Named Saves",
             builder => builder.AddSimpleComponent<NamedSavesPage>(),
-            Closeable: false,
-            Icon: Icons.Material.Filled.Class
+            closeable: false,
+            icon: Icons.Material.Filled.Class
         ));
     }
 
@@ -107,10 +107,39 @@ public class TabBarService
 
     public void Close(TabView tabView)
     {
+        var tabIndex = _tabViews.IndexOf(tabView);
+
+        if (tabIndex < 0)
+        {
+            return;
+        }
+
+        // Move to home if the current tab is this one
+        if (_activeTabIndex == tabIndex)
+        {
+            _activeTabIndex = 0;
+        }
+
         _tabViews.Remove(tabView);
+
+        // Clear navigation history
+        _previousTabsHistory.Clear();
+        _nextTabsHistory.Clear();
 
         TabBarUpdated?.Invoke();
 
         _logger.LogInformation("Tab closed: {Name}", tabView.Name);
+    }
+
+    public void Open(TabView tabView)
+    {
+        if (!_tabViews.Contains(tabView))
+        {
+            _tabViews.Add(tabView);
+        }
+
+        ActiveIndex = _tabViews.IndexOf(tabView);
+
+        _logger.LogInformation("Tab opened: {Name}", tabView.Name);
     }
 }

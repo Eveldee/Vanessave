@@ -1,42 +1,65 @@
+@using Vanessave.Desktop.Models
+@using Vanessave.Desktop.Services
+@inject WorkspacesService WorkspacesService
+@inject ISnackbar Snackbar
+
 <div id="homepage">
-    <MudSpacer />
+    <MudSpacer/>
 
     <MudStack Row="true" Justify="Justify.SpaceEvenly" Class="mt-10" Style="user-select: none">
         <MudPaper Class="main-button" Outlined="true" @onclick="AddGameInstallButtonClick">
             <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-                <MudIcon Size="Size.Large" Icon="@Icons.Material.Filled.Add" />
-                <MudText>Add game installation</MudText>
+                <MudIcon Color="Color.Secondary" Size="Size.Large" Icon="@Icons.Material.Filled.Add"/>
+                <MudText Color="Color.Secondary" >Add game installation</MudText>
             </MudStack>
         </MudPaper>
         <MudPaper Class="main-button" Outlined="true" @onclick="OpenSaveSettingsButtonClick">
             <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-                <MudIcon Size="Size.Large" Icon="@Icons.Material.Filled.FileOpen" />
-                <MudText>Open save/settings</MudText>
+                <MudIcon Color="Color.Secondary" Size="Size.Large" Icon="@Icons.Material.Filled.FileOpen"/>
+                <MudText Color="Color.Secondary" >Open save/settings</MudText>
             </MudStack>
         </MudPaper>
     </MudStack>
 
-    <MudDivider Class="ma-10" FlexItem="true" DividerType="DividerType.Middle" />
+    <MudDivider Class="ma-10" FlexItem="true" DividerType="DividerType.Middle"/>
 
     <MudText Typo="Typo.h5" Class="ma-3">Game installations</MudText>
-    <MudPaper Outlined="true" Class="pa-5">
-        <MudText>Test</MudText>
+    <MudPaper Outlined="true" Class="px-5">
+        @foreach (var workspace in WorkspacesService.Workspaces)
+        {
+            <div class="my-5 workspace" @onclick="() => OpenWorkspaceClick(workspace)">
+                <MudText Color="Color.Secondary">@workspace.Name</MudText>
+                <MudText Typo="Typo.caption">@workspace.Path</MudText>
+            </div>
+        }
     </MudPaper>
 
-    <MudSpacer />
-    <MudSpacer />
+    <MudSpacer/>
+    <MudSpacer/>
 </div>
 
 @code {
 
-    private void AddGameInstallButtonClick()
+    private async Task AddGameInstallButtonClick()
     {
+        bool success = false;
 
+        await Task.Run(() => success = WorkspacesService.Add(Snackbar));
+
+        if (success)
+        {
+            StateHasChanged();
+        }
     }
 
     private void OpenSaveSettingsButtonClick()
     {
 
+    }
+
+    private void OpenWorkspaceClick(Workspace workspace)
+    {
+        WorkspacesService.Open(workspace);
     }
 
 }

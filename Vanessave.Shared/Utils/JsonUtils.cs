@@ -5,17 +5,17 @@ namespace Vanessave.Shared.Utils;
 
 public static class JsonUtils
 {
-    private static readonly JsonSerializerOptions PrettifyOptions = new()
+    public static readonly JsonSerializerOptions PrettifyOptions = new()
     {
         WriteIndented = true
     };
 
-    private static readonly JsonSerializerOptions MinifyOptions = new()
+    public static readonly JsonSerializerOptions MinifyOptions = new()
     {
         WriteIndented = false
     };
 
-    private static readonly JsonSerializerOptions SaveOptions = new()
+    public static readonly JsonSerializerOptions SaveOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         WriteIndented = false
