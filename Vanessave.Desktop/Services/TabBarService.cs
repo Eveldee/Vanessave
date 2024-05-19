@@ -15,18 +15,24 @@ public class TabBarService
 
     public IEnumerable<TabView> TabViews => _tabViews;
 
-    private int _activeTabIndex;
-
     public int ActiveIndex
     {
-        get => _activeTabIndex;
+        get => _tabViews.IndexOf(ActiveTab);
+        set => ActiveTab = _tabViews[value];
+    }
+
+    private TabView _activeTab = null!;
+    public TabView ActiveTab
+    {
+        get => _activeTab;
         set
         {
-            if (value != _activeTabIndex)
+            if (value != _activeTab)
             {
-                _previousTabsHistory.Push(_activeTabIndex);
+                _previousTabsHistory.Push(_activeTab);
+                _nextTabsHistory.Clear();
 
-                _activeTabIndex = value;
+                _activeTab = value;
 
                 TabBarUpdated?.Invoke();
             }
@@ -40,16 +46,16 @@ public class TabBarService
 
     private readonly ILogger<TabBarService> _logger;
     private readonly List<TabView> _tabViews;
-    private readonly Stack<int> _previousTabsHistory;
-    private readonly Stack<int> _nextTabsHistory;
+    private Stack<TabView> _previousTabsHistory;
+    private Stack<TabView> _nextTabsHistory;
 
     public TabBarService(ILogger<TabBarService> logger)
     {
         _logger = logger;
 
         _tabViews = new List<TabView>();
-        _previousTabsHistory = new Stack<int>();
-        _nextTabsHistory = new Stack<int>();
+        _previousTabsHistory = new Stack<TabView>();
+        _nextTabsHistory = new Stack<TabView>();
 
         AddDefaultTabs();
     }
@@ -71,14 +77,25 @@ public class TabBarService
             closeable: false,
             icon: Icons.Material.Filled.Class
         ));
+
+        // Set home as active tab
+        _activeTab = _tabViews[HomeIndex];
     }
 
     public void NavigateBack()
     {
+        NavigateBack(true);
+    }
+    private void NavigateBack(bool updateHistory)
+    {
         if (_previousTabsHistory.Count > 0)
         {
-            _nextTabsHistory.Push(_activeTabIndex);
-            _activeTabIndex = _previousTabsHistory.Pop();
+            if (updateHistory)
+            {
+                _nextTabsHistory.Push(_activeTab);
+            }
+
+            _activeTab = _previousTabsHistory.Pop();
 
             TabBarUpdated?.Invoke();
         }
@@ -88,8 +105,8 @@ public class TabBarService
     {
         if (_nextTabsHistory.Count > 0)
         {
-            _previousTabsHistory.Push(_activeTabIndex);
-            _activeTabIndex = _nextTabsHistory.Pop();
+            _previousTabsHistory.Push(_activeTab);
+            _activeTab = _nextTabsHistory.Pop();
 
             TabBarUpdated?.Invoke();
         }
@@ -97,7 +114,7 @@ public class TabBarService
 
     public void NavigateHome()
     {
-        _activeTabIndex = HomeIndex;
+        _activeTab = _tabViews[HomeIndex];
 
         _previousTabsHistory.Clear();
         _nextTabsHistory.Clear();
@@ -105,30 +122,35 @@ public class TabBarService
         TabBarUpdated?.Invoke();
     }
 
-    public void Close(TabView tabView)
+    public void Close(TabView toRemove)
     {
-        var tabIndex = _tabViews.IndexOf(tabView);
-
-        if (tabIndex < 0)
+        if (!_tabViews.Remove(toRemove))
         {
             return;
         }
 
-        // Move to home if the current tab is this one
-        if (_activeTabIndex == tabIndex)
+        // Remove this tab from navigation history
+        _previousTabsHistory = new Stack<TabView>(_previousTabsHistory.Where(tab => tab != toRemove));
+        _nextTabsHistory = new Stack<TabView>(_nextTabsHistory.Where(tab => tab != toRemove));
+
+        // If deleted tab is current, we need to move to previous or home
+        if (toRemove == _activeTab)
         {
-            _activeTabIndex = 0;
+            if (_previousTabsHistory.Count > 0)
+            {
+                NavigateBack(false);
+            }
+            else
+            {
+                NavigateHome();
+            }
+        }
+        else
+        {
+            TabBarUpdated?.Invoke();
         }
 
-        _tabViews.Remove(tabView);
-
-        // Clear navigation history
-        _previousTabsHistory.Clear();
-        _nextTabsHistory.Clear();
-
-        TabBarUpdated?.Invoke();
-
-        _logger.LogInformation("Tab closed: {Name}", tabView.Name);
+        _logger.LogInformation("Tab closed: {Name}", toRemove.Name);
     }
 
     public void Open(TabView tabView)
@@ -138,7 +160,7 @@ public class TabBarService
             _tabViews.Add(tabView);
         }
 
-        ActiveIndex = _tabViews.IndexOf(tabView);
+        ActiveTab = tabView;
 
         _logger.LogInformation("Tab opened: {Name}", tabView.Name);
     }
