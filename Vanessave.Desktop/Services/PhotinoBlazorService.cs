@@ -10,6 +10,7 @@ using MudBlazor.Services;
 using Photino.Blazor;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Vanessave.Desktop.Components;
+using Vanessave.Shared.Services;
 using Vanessave.Shared.Utils.Extensions;
 
 namespace Vanessave.Desktop.Services;
@@ -71,6 +72,7 @@ public class PhotinoBlazorService : IHostedService
         builder.Services.AddSingleton<TabBarService>();
         builder.Services.AddSingleton<WorkspacesService>();
         builder.Services.AddSingleton<VanessaveSettingsProvider>();
+        builder.Services.AddSingleton<IAppPreferencesProvider, AppPreferencesProvider>();
 
         // Register root component
         builder.RootComponents.Add<App>("app");

@@ -1,10 +1,12 @@
 ﻿@using Toolbelt.Blazor.HotKeys2
 @using Vanessave.Desktop.Services
+@using Vanessave.Shared.Services
 @using Vanessave.Shared.Utils
 @inherits LayoutComponentBase
 @implements IDisposable
 @inject TabBarService TabBarService
 @inject HotKeys Hotkeys
+@inject IAppPreferencesProvider Preferences
 
 <MyMudThemeProvider/>
 <MyMudProviders/>
@@ -24,6 +26,10 @@
 
             <MudText Typo="Typo.h5">Vanessave</MudText>
             <MudSpacer/>
+            <MudToggleIconButton @bind-Toggled:get="@(Preferences.IsDarkMode!.Value)"
+                                 @bind-Toggled:set="@(value => Preferences.IsDarkMode = value)"
+                                 Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit"
+                                 ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="Color.Warning"/>
             <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" OnClick="GithubButtonClick"/>
         </MudAppBar>
 

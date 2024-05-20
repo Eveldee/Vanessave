@@ -1,4 +1,8 @@
 ﻿@using MudBlazor.Utilities
+@using Vanessave.Shared.Services
+@using Vanessave.Shared.Utils
+@inject IAppPreferencesProvider Preferences
+
 <CascadingValue Value=false Name="UsePopoverProvider">
     <MudThemeProvider @ref="_mudThemeProvider" Theme="MyTheme" @bind-IsDarkMode="_isDarkMode"/>
 </CascadingValue>
@@ -12,21 +16,31 @@
     {
         if (firstRender)
         {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            if (Preferences.IsDarkMode is { } isDarkMode)
+            {
+                _isDarkMode = isDarkMode;
+            }
+            else
+            {
+                _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+                Preferences.IsDarkMode = _isDarkMode;
+            }
 
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            // Subscribe to theme change
+            Preferences.PreferenceChanged += OnPreferenceChanged;
 
             StateHasChanged();
         }
     }
 
-    private Task OnSystemPreferenceChanged(bool newValue)
+    private void OnPreferenceChanged(string preferenceKey)
     {
-        _isDarkMode = newValue;
+        if (preferenceKey == AppPreferences.IsDarkMode)
+        {
+            _isDarkMode = Preferences.GetValue<bool>(AppPreferences.IsDarkMode);
 
-        StateHasChanged();
-
-        return Task.CompletedTask;
+            StateHasChanged();
+        }
     }
 
     public static MudColor PrimaryPurpleLight => "#594AE2";
