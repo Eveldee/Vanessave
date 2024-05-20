@@ -1,7 +1,9 @@
+@using Vanessave.Desktop.Components.Dialogs
 @using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
 @inject WorkspacesService WorkspacesService
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <div id="homepage">
     <MudSpacer/>
@@ -25,12 +27,20 @@
 
     <MudText Typo="Typo.h5" Class="ma-3">Game installations</MudText>
     <MudPaper Outlined="true" Class="px-5">
-        @foreach (var workspace in WorkspacesService.Workspaces)
+        @foreach (var workspace in WorkspacesService.Workspaces.OrderBy(w => w.Name))
         {
-            <div class="my-5 workspace" @onclick="() => OpenWorkspace(workspace)">
-                <MudText Color="Color.Secondary">@workspace.Name</MudText>
-                <MudText Typo="Typo.caption">@workspace.Path</MudText>
-            </div>
+            <MudStack Row="true">
+                <div class="py-5 flex-1 workspace" @onclick="() => OpenWorkspace(workspace)">
+                    <MudText Color="Color.Secondary" Typo="Typo.subtitle1">@workspace.Name</MudText>
+                    <MudText Typo="Typo.caption">@workspace.Path</MudText>
+                </div>
+                <MudTooltip RootClass="d-flex" Text="Rename">
+                    <MudIconButton Class="workspace-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => RenameButtonClick(workspace)"/>
+                </MudTooltip>
+                <MudTooltip RootClass="d-flex" Text="Remove">
+                    <MudIconButton Class="workspace-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(workspace)"/>
+                </MudTooltip>
+            </MudStack>
         }
     </MudPaper>
 
@@ -62,6 +72,34 @@
     private void OpenWorkspace(Workspace workspace)
     {
         WorkspacesService.Open(workspace);
+    }
+
+    private async Task RenameButtonClick(Workspace workspace)
+    {
+        var parameters = new DialogParameters<RenameDialog>
+        {
+            { renameDialog => renameDialog.OldName, workspace.Name }
+        };
+
+        var dialog = await DialogService.ShowAsync<RenameDialog>("Rename workspace", parameters);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        WorkspacesService.UpdateName(workspace, (string)result.Data);
+
+        StateHasChanged();
+    }
+
+    private void DeleteButtonClick(Workspace workspace)
+    {
+        if (WorkspacesService.Remove(workspace))
+        {
+            StateHasChanged();
+        }
     }
 
 }

@@ -10,7 +10,8 @@
         <ChildContent>
             @foreach (var item in TabBarService.TabViews)
             {
-                <MudTabPanel ID="@item" Text="@item.Name" Tag="@item" Icon="@item.Icon">
+                var title = item.Caption is not null ? $"{item.Caption}: {item.Name}" : $"{item.Name}";
+                <MudTabPanel ID="@item" Text="@title" Tag="@item" Icon="@item.Icon">
                     <MudContainer MaxWidth="MaxWidth.Large" Style="display: grid;">
                         @item.Content
                     </MudContainer>

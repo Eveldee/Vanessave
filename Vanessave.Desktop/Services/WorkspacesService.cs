@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 using NativeFileDialogSharp;
@@ -50,7 +51,7 @@ public class WorkspacesService
         var workspace = new Workspace(fileInfo.Directory.Name, fileInfo.Directory.FullName);
 
         // Avoid duplicates
-        if (Settings.Workspaces.Contains(workspace))
+        if (Settings.Workspaces.Any(w => w.Path == workspace.Path))
         {
             return workspace;
         }
@@ -72,5 +73,23 @@ public class WorkspacesService
             icon: Icons.Material.Filled.Dashboard,
             caption: "Workspace"
         ));
+    }
+
+    public void UpdateName(Workspace workspace, string newName)
+    {
+        workspace.Name = newName;
+        _settingsProvider.Save(nameof(Settings.Workspaces));
+    }
+
+    public bool Remove(Workspace workspace)
+    {
+        if (Settings.Workspaces.Remove(workspace))
+        {
+            _settingsProvider.Save(nameof(Settings.Workspaces));
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,0 +1,32 @@
+﻿@using Toolbelt.Blazor.HotKeys2
+<MudDialog DefaultFocus="DefaultFocus.FirstChild">
+    <DialogContent>
+        <MudTextField @bind-Value="NewName" Label="New name" Placeholder="@OldName" OnKeyUp="OnKeyUp"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Close">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance Dialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public string OldName { get; set; } = null!;
+
+    public string? NewName { get; set; }
+
+    private void OnKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            Close();
+        }
+    }
+
+    private void Close() => Dialog.Close(DialogResult.Ok(NewName));
+
+}
