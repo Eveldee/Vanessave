@@ -53,11 +53,18 @@
     private async Task AddGameInstallButtonClick()
     {
         Workspace? workspace = null;
+        var initialCount = WorkspacesService.Workspaces.Count();
 
         await Task.Run(() => workspace = WorkspacesService.Add(Snackbar));
 
         if (workspace is not null)
         {
+            // Ask for name if it's a new workspace
+            if (WorkspacesService.Workspaces.Count() > initialCount)
+            {
+                await RenameButtonClick(workspace, false);
+            }
+
             StateHasChanged();
 
             OpenWorkspace(workspace);
@@ -74,14 +81,15 @@
         WorkspacesService.Open(workspace);
     }
 
-    private async Task RenameButtonClick(Workspace workspace)
+    private async Task RenameButtonClick(Workspace workspace, bool cancelable = true)
     {
         var parameters = new DialogParameters<RenameDialog>
         {
-            { renameDialog => renameDialog.OldName, workspace.Name }
+            { renameDialog => renameDialog.OldName, workspace.Name },
+            { renameDialog => renameDialog.Cancelable, cancelable }
         };
 
-        var dialog = await DialogService.ShowAsync<RenameDialog>("Rename workspace", parameters);
+        var dialog = await DialogService.ShowAsync<RenameDialog>("Rename installation", parameters);
         var result = await dialog.Result;
 
         if (result.Canceled)

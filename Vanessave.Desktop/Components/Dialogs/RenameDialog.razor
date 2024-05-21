@@ -4,7 +4,10 @@
         <MudTextField @bind-Value="NewName" Label="New name" Placeholder="@OldName" OnKeyUp="OnKeyUp"/>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        @if (Cancelable)
+        {
+            <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        }
         <MudButton Color="Color.Primary" OnClick="Close">Ok</MudButton>
     </DialogActions>
 </MudDialog>
@@ -17,7 +20,24 @@
     [Parameter, EditorRequired]
     public string OldName { get; set; } = null!;
 
+    [Parameter, EditorRequired]
+    public bool Cancelable { get; set; } = false;
+
     public string? NewName { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (!Cancelable)
+        {
+            Dialog.Options.CloseButton = false;
+            Dialog.Options.CloseOnEscapeKey = false;
+            Dialog.Options.DisableBackdropClick = true;
+
+            Dialog.SetOptions(Dialog.Options);
+
+            Dialog.SetTitle("Assign a name");
+        }
+    }
 
     private void OnKeyUp(KeyboardEventArgs e)
     {
@@ -27,6 +47,12 @@
         }
     }
 
-    private void Close() => Dialog.Close(DialogResult.Ok(NewName));
+    private void Close()
+    {
+        if (!string.IsNullOrWhiteSpace(NewName))
+        {
+            Dialog.Close(DialogResult.Ok(NewName));
+        }
+    }
 
 }

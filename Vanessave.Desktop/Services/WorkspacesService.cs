@@ -83,7 +83,7 @@ public class WorkspacesService
             content: builder => builder.AddSimpleComponent<WorkspacePage, Workspace>(workspace),
             closeable: true,
             icon: Icons.Material.Filled.Dashboard,
-            caption: "Workspace"
+            caption: "Install"
         ));
     }
 
