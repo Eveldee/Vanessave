@@ -12,7 +12,8 @@ public class GameSave
     public required Props Props { get; set; }
     public required Dictionary<string, bool> Flags { get; set; }
     public required Tips Tips { get; set; }
-    public required BossRush BossRush { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public BossRush? BossRush { get; set; }
 }
 
 public class Basic
@@ -63,7 +64,7 @@ public class Props
 
 public class SceneItem
 {
-    // For some reasons those two use Pascal case in the json instead of Camel case
+    // For some reason those two use Pascal case in the json instead of Camel case
     [JsonPropertyName(nameof(Type))]
     public int Type { get; set; }
     [JsonPropertyName(nameof(Position))]
