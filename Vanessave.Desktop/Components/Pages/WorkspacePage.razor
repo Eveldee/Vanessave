@@ -1,13 +1,16 @@
-﻿@using Vanessave.Desktop.Models
+﻿@using Toolbelt.Blazor.HotKeys2
+@using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
+@implements IDisposable
 @inject WorkspacesService WorkspacesService
 @inject SavesManager SavesManager
+@inject HotKeys Hotkeys
 
 <div class="d-flex flex-column">
     <MudStack Row="true">
         <MudText Typo="Typo.h3" Color="Color.Secondary">@Workspace.Name</MudText>
         <MudSpacer/>
-        <MudTooltip RootClass="d-flex" Text="Refresh">
+        <MudTooltip RootClass="d-flex" Text="Refresh (F5)">
             <MudIconButton Class="action-button" Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" OnClick="RefreshWorkspace"/>
         </MudTooltip>
     </MudStack>
@@ -24,7 +27,7 @@
                         <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
                     </div>
                     <MudTooltip RootClass="d-flex" Text="Edit">
-                        <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditButtonClick(saveInfo)"/>
+                        <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
                     </MudTooltip>
                     <MudTooltip RootClass="d-flex" Text="Remove">
                         <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(saveInfo)"/>
@@ -44,13 +47,23 @@
     public Workspace Workspace { get; set; } = null!;
 
     private WorkspaceData _workspaceData = null!;
+    private HotKeysContext? _hotKeysContext;
 
     protected override async Task OnParametersSetAsync()
     {
         _workspaceData = await WorkspacesService.LoadWorkspaceData(Workspace);
     }
 
-    private async Task RefreshWorkspace(MouseEventArgs obj)
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _hotKeysContext = Hotkeys.CreateContext()
+                .Add(Code.F5, RefreshWorkspace, new HotKeyOptions { Exclude = Exclude.None });
+        }
+    }
+
+    private async Task RefreshWorkspace()
     {
         _workspaceData = await WorkspacesService.LoadWorkspaceData(Workspace);
     }
@@ -60,14 +73,14 @@
 
     }
 
-    private void EditButtonClick(SaveInfo saveInfo)
-    {
-
-    }
-
     private void DeleteButtonClick(SaveInfo saveInfo)
     {
         SavesManager.DeleteSave(_workspaceData, saveInfo);
+    }
+
+    public void Dispose()
+    {
+        _hotKeysContext?.Dispose();
     }
 
 }
