@@ -5,7 +5,7 @@ using System.Text;
 namespace Vanessave.Shared.Services;
 
 [UnsupportedOSPlatform("browser")]
-public class SaveCipherProvider : IDisposable
+public sealed class SaveCipherProvider : IDisposable
 {
     public const string Key = "vckiTpRHOzjVf+5/+d9EIw==";
     public const string IV = "zXKcTMyXoZAtt4f0XXsQ2Q==";
@@ -22,10 +22,15 @@ public class SaveCipherProvider : IDisposable
 
     public async Task<string> DecryptSave(Stream save)
     {
-        await using var decryptor = new CryptoStream(save, _aes.CreateDecryptor(), CryptoStreamMode.Read);
+        await using var decryptor = GetDecryptStream(save);
         using var textReader = new StreamReader(decryptor);
 
         return await textReader.ReadToEndAsync();
+    }
+
+    public Stream GetDecryptStream(Stream save)
+    {
+        return new CryptoStream(save, _aes.CreateDecryptor(), CryptoStreamMode.Read);
     }
 
     public Stream GetEncryptStream(string save)

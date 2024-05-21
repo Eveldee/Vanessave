@@ -73,6 +73,7 @@ public class PhotinoBlazorService : IHostedService
         builder.Services.AddSingleton<WorkspacesService>();
         builder.Services.AddSingleton<VanessaveSettingsProvider>();
         builder.Services.AddSingleton<IAppPreferencesProvider, AppPreferencesProvider>();
+        builder.Services.AddSingleton<SavesManager>();
 
         // Register root component
         builder.RootComponents.Add<App>("app");

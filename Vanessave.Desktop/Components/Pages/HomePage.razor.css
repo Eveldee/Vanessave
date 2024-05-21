@@ -20,7 +20,3 @@
 ::deep .workspace {
     cursor: pointer;
 }
-
-::deep .workspace-button {
-    align-self: center;
-}

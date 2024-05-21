@@ -1,9 +1,73 @@
 ﻿@using Vanessave.Desktop.Models
-<h3>WorkspacePage: @Workspace</h3>
+@using Vanessave.Desktop.Services
+@inject WorkspacesService WorkspacesService
+@inject SavesManager SavesManager
+
+<div class="d-flex flex-column">
+    <MudStack Row="true">
+        <MudText Typo="Typo.h3" Color="Color.Secondary">@Workspace.Name</MudText>
+        <MudSpacer/>
+        <MudTooltip RootClass="d-flex" Text="Refresh">
+            <MudIconButton Class="action-button" Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" OnClick="RefreshWorkspace"/>
+        </MudTooltip>
+    </MudStack>
+
+    <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
+             Class="mt-4 flex-1" PanelClass="pa-6" ApplyEffectsToContainer="true"
+             IconColor="Color.Secondary" SliderColor="Color.Secondary" TabPanelClass="workspace-tab">
+        <MudTabPanel Icon="@Icons.Material.Filled.Save" Text="Saves">
+            @foreach (var saveInfo in _workspaceData.GameSaveInfos)
+            {
+                <MudStack Row="true">
+                    <div class="py-5 flex-1 workspace" @onclick="() => EditSave(saveInfo)">
+                        <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
+                        <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
+                    </div>
+                    <MudTooltip RootClass="d-flex" Text="Edit">
+                        <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditButtonClick(saveInfo)"/>
+                    </MudTooltip>
+                    <MudTooltip RootClass="d-flex" Text="Remove">
+                        <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(saveInfo)"/>
+                    </MudTooltip>
+                </MudStack>
+            }
+        </MudTabPanel>
+        <MudTabPanel Icon="@Icons.Material.Filled.SaveAlt" Text="SaveStates">
+            SaveStates
+        </MudTabPanel>
+    </MudTabs>
+</div>
 
 @code {
 
     [Parameter, EditorRequired]
     public Workspace Workspace { get; set; } = null!;
+
+    private WorkspaceData _workspaceData = null!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _workspaceData = await WorkspacesService.LoadWorkspaceData(Workspace);
+    }
+
+    private async Task RefreshWorkspace(MouseEventArgs obj)
+    {
+        _workspaceData = await WorkspacesService.LoadWorkspaceData(Workspace);
+    }
+
+    private void EditSave(SaveInfo saveInfo)
+    {
+
+    }
+
+    private void EditButtonClick(SaveInfo saveInfo)
+    {
+
+    }
+
+    private void DeleteButtonClick(SaveInfo saveInfo)
+    {
+        SavesManager.DeleteSave(_workspaceData, saveInfo);
+    }
 
 }

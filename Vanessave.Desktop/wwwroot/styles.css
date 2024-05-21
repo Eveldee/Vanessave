@@ -26,3 +26,11 @@ header.mud-appbar {
 #main-tab-bar > .mud-tabs {
     height: 100%;
 }
+
+.d-grid {
+    display: grid !important;
+}
+
+.action-button {
+    align-self: center;
+}

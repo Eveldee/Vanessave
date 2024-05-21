@@ -1,4 +1,4 @@
-﻿#main-tab-bar ::deep .mud-tabs-panels {
+﻿#main-tab-bar ::deep  > div > div.mud-tabs-panels.px-4 {
     flex-grow: 1;
 
     display: grid;
