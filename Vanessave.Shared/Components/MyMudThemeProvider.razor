@@ -1,6 +1,7 @@
 ﻿@using MudBlazor.Utilities
 @using Vanessave.Shared.Services
 @using Vanessave.Shared.Utils
+@implements IDisposable
 @inject IAppPreferencesProvider Preferences
 
 <CascadingValue Value=false Name="UsePopoverProvider">
@@ -41,6 +42,11 @@
 
             StateHasChanged();
         }
+    }
+
+    public void Dispose()
+    {
+        Preferences.PreferenceChanged -= OnPreferenceChanged;
     }
 
     public static MudColor PrimaryPurpleLight => "#594AE2";
