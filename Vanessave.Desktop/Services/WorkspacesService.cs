@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
-using NativeFileDialogSharp;
+using NativeFileDialogs.Net;
 using Vanessave.Desktop.Components.Pages;
 using Vanessave.Desktop.Models;
+using Vanessave.Desktop.Utils;
 using Vanessave.Desktop.Utils.Extensions;
 using Vanessave.Shared.Utils.Extensions;
 
@@ -32,14 +34,24 @@ public class WorkspacesService
 
     public Workspace? Add(ISnackbar snackbar)
     {
-        var dialogResult = Dialog.FileOpen("exe");
+        NfdStatus dialogResult;
+        string? path;
 
-        if (!dialogResult.IsOk)
+        try
+        {
+            dialogResult = Nfd.OpenDialog(out path, FileUtils.ExeFilters);
+        }
+        catch
         {
             return null;
         }
 
-        var fileInfo = new FileInfo(dialogResult.Path);
+        if (dialogResult != NfdStatus.Ok || path is null)
+        {
+            return null;
+        }
+
+        var fileInfo = new FileInfo(path);
 
         if (!fileInfo.Exists || fileInfo.Name is not GameExecutableName || fileInfo.Directory is null)
         {
