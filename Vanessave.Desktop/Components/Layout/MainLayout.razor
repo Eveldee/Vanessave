@@ -26,7 +26,7 @@
 
             <MudText Typo="Typo.h5">Vanessave</MudText>
             <MudSpacer/>
-            <MudToggleIconButton @bind-Toggled:get="@(Preferences.IsDarkMode!.Value)"
+            <MudToggleIconButton @bind-Toggled:get="@(Preferences.IsDarkMode.HasValue && Preferences.IsDarkMode!.Value)"
                                  @bind-Toggled:set="@(value => Preferences.IsDarkMode = value)"
                                  Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit"
                                  ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="Color.Warning"/>
