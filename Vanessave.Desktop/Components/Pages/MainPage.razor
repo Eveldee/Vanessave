@@ -6,7 +6,7 @@
 
 <div id="main-tab-bar">
     <MudTabs @bind-ActivePanelIndex="@TabBarService.ActiveIndex"
-             Elevation="0" Border="true" Outlined="true" PanelClass="d-grid flex-1 px-4 py-6">
+             Elevation="0" Border="true" Outlined="false" PanelClass="d-grid flex-1 px-4 py-6">
         <ChildContent>
             @foreach (var item in TabBarService.TabViews)
             {

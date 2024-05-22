@@ -72,10 +72,10 @@ public class TabBarService
 
         // NamedSaves tab
         _tabViews.Add(new TabView(
-            "Named Saves",
-            builder => builder.AddSimpleComponent<NamedSavesPage>(),
+            "Backups",
+            builder => builder.AddSimpleComponent<BackupsPage>(),
             closeable: false,
-            icon: Icons.Material.Filled.Class
+            icon: Icons.Material.Filled.SettingsBackupRestore
         ));
 
         // Set home as active tab
@@ -163,5 +163,16 @@ public class TabBarService
         ActiveTab = tabView;
 
         _logger.LogInformation("Tab opened: {Name}", tabView.Name);
+    }
+
+    public void OpenWorkspace(Workspace workspace)
+    {
+        Open(new TabView(
+            name: workspace.Name,
+            content: builder => builder.AddSimpleComponent<WorkspacePage, Workspace>(workspace),
+            closeable: true,
+            icon: Icons.Material.Filled.Dashboard,
+            caption: "Install"
+        ));
     }
 }

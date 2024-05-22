@@ -2,6 +2,7 @@
 @using Vanessave.Desktop.Components.Dialogs
 @using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
+@using Vanessave.Shared.Utils.Extensions
 @implements IDisposable
 @inject WorkspacesService WorkspacesService
 @inject SavesManager SavesManager
@@ -24,20 +25,25 @@
              Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true"
              IconColor="Color.Secondary" SliderColor="Color.Secondary" TabPanelClass="workspace-tab">
         <MudTabPanel Icon="@Icons.Material.Filled.Save" Text="Saves">
-            @foreach (var saveInfo in _workspaceData.GameSaveInfos)
+            @foreach (var (saveInfo, first) in _workspaceData.GameSaveInfos.WithFirst())
             {
-                <MudStack Row="true">
-                    <div class="py-5 flex-1 workspace" @onclick="() => EditSave(saveInfo)">
-                        <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
-                        <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
-                    </div>
-                    <MudTooltip RootClass="d-flex" Text="Edit">
-                        <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
-                    </MudTooltip>
-                    <MudTooltip RootClass="d-flex" Text="Delete">
-                        <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(saveInfo)"/>
-                    </MudTooltip>
-                </MudStack>
+                    if (!first)
+                    {
+                        <MudDivider DividerType="DividerType.FullWidth" />
+                    }
+
+                    <MudStack Row="true">
+                        <div class="py-5 flex-1 workspace" @onclick="() => EditSave(saveInfo)">
+                            <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
+                            <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
+                        </div>
+                        <MudTooltip RootClass="d-flex" Text="Edit">
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
+                        </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Delete">
+                            <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(saveInfo)"/>
+                        </MudTooltip>
+                    </MudStack>
             }
         </MudTabPanel>
 

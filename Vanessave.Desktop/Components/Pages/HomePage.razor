@@ -1,6 +1,7 @@
 @using Vanessave.Desktop.Components.Dialogs
 @using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
+@using Vanessave.Shared.Utils.Extensions
 @inject WorkspacesService WorkspacesService
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -27,8 +28,13 @@
 
     <MudText Typo="Typo.h5" Class="ma-3">Game installations</MudText>
     <MudPaper Outlined="true" Class="px-5">
-        @foreach (var workspace in WorkspacesService.Workspaces.OrderBy(w => w.Name))
+        @foreach (var (workspace, first) in WorkspacesService.Workspaces.OrderBy(w => w.Name).WithFirst())
         {
+            if (!first)
+            {
+                <MudDivider DividerType="DividerType.FullWidth" />
+            }
+
             <MudStack Row="true">
                 <div class="py-5 flex-1 workspace" @onclick="() => OpenWorkspace(workspace)">
                     <MudText Color="Color.Secondary" Typo="Typo.subtitle1">@workspace.Name</MudText>

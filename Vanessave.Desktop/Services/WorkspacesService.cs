@@ -83,13 +83,7 @@ public class WorkspacesService
 
     public void Open(Workspace workspace)
     {
-        _tabBarService.Open(new TabView(
-            name: workspace.Name,
-            content: builder => builder.AddSimpleComponent<WorkspacePage, Workspace>(workspace),
-            closeable: true,
-            icon: Icons.Material.Filled.Dashboard,
-            caption: "Install"
-        ));
+        _tabBarService.OpenWorkspace(workspace);
     }
 
     public void UpdateName(Workspace workspace, string newName)
