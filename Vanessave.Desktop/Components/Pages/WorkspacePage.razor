@@ -1,22 +1,27 @@
 ﻿@using Toolbelt.Blazor.HotKeys2
+@using Vanessave.Desktop.Components.Dialogs
 @using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
 @implements IDisposable
 @inject WorkspacesService WorkspacesService
 @inject SavesManager SavesManager
 @inject HotKeys Hotkeys
+@inject IDialogService DialogService
 
 <div class="d-flex flex-column">
     <MudStack Row="true">
         <MudText Typo="Typo.h3" Color="Color.Secondary">@Workspace.Name</MudText>
         <MudSpacer/>
         <MudTooltip RootClass="d-flex" Text="Refresh (F5)">
-            <MudIconButton Class="action-button" Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" OnClick="RefreshWorkspace"/>
+            <MudButton Class="action-button" Size="Size.Large" IconSize="Size.Large" Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.Refresh" OnClick="RefreshWorkspace">
+                Refresh
+            </MudButton>
         </MudTooltip>
     </MudStack>
 
     <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
-             Class="mt-4 flex-1" PanelClass="pa-6" ApplyEffectsToContainer="true"
+             Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true"
              IconColor="Color.Secondary" SliderColor="Color.Secondary" TabPanelClass="workspace-tab">
         <MudTabPanel Icon="@Icons.Material.Filled.Save" Text="Saves">
             @foreach (var saveInfo in _workspaceData.GameSaveInfos)
@@ -29,15 +34,23 @@
                     <MudTooltip RootClass="d-flex" Text="Edit">
                         <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
                     </MudTooltip>
-                    <MudTooltip RootClass="d-flex" Text="Remove">
+                    <MudTooltip RootClass="d-flex" Text="Delete">
                         <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(saveInfo)"/>
                     </MudTooltip>
                 </MudStack>
             }
         </MudTabPanel>
-        <MudTabPanel Icon="@Icons.Material.Filled.SaveAlt" Text="SaveStates">
-            SaveStates
+
+        <MudTabPanel Icon="@Icons.Material.Filled.Settings" Text="Settings">
+            Settings
         </MudTabPanel>
+
+        @if (_workspaceData.SavestatesData is { } savestatesData)
+        {
+            <MudTabPanel Icon="@Icons.Material.Filled.SaveAlt" Text="SaveStates">
+                SaveStates
+            </MudTabPanel>
+        }
     </MudTabs>
 </div>
 
@@ -73,9 +86,24 @@
 
     }
 
-    private void DeleteButtonClick(SaveInfo saveInfo)
+    private async Task DeleteButtonClick(SaveInfo saveInfo)
     {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { confirmDialog => confirmDialog.ConfirmMessage, "This action is irreversible" }
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>("Delete save?", parameters);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
         SavesManager.DeleteSave(_workspaceData, saveInfo);
+
+        StateHasChanged();
     }
 
     public void Dispose()

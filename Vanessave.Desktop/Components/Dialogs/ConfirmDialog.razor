@@ -1,0 +1,24 @@
+﻿<MudDialog DefaultFocus="DefaultFocus.FirstChild">
+    <DialogContent>
+        @ConfirmMessage
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Confirm">Yes</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance Dialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public string ConfirmMessage { get; set; } = null!;
+
+    private void Confirm()
+    {
+        Dialog.Close(DialogResult.Ok(true));
+    }
+
+}
