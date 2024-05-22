@@ -10,4 +10,7 @@ public partial class VanessaveSettings : ObservableObject
 
     [ObservableProperty]
     private Dictionary<string, string> _preferences = [];
+
+    [ObservableProperty]
+    private bool _overrideSaveOnLoad;
 }

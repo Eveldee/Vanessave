@@ -71,7 +71,7 @@ public class PhotinoBlazorService : IHostedService
 
         builder.Services.AddSingleton<TabBarService>();
         builder.Services.AddSingleton<WorkspacesService>();
-        builder.Services.AddSingleton<VanessaveSettingsProvider>();
+        builder.Services.AddSingleton<SettingsProvider>();
         builder.Services.AddSingleton<IAppPreferencesProvider, AppPreferencesProvider>();
         builder.Services.AddSingleton<SavesManager>();
 
@@ -83,7 +83,7 @@ public class PhotinoBlazorService : IHostedService
         ServiceProvider = _app.Services;
 
         // Initialize some services
-        ServiceProvider.GetRequiredService<VanessaveSettingsProvider>();
+        ServiceProvider.GetRequiredService<SettingsProvider>();
 
         // Customize window
         _app.MainWindow

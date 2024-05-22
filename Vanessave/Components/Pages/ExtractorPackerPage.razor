@@ -71,7 +71,7 @@
         // Write new settings and download it
         var minifiedJson = JsonUtils.Minify(value);
 
-        await using var encryptedDataStream = SaveCipher.GetEncryptStream(minifiedJson);
+        await using var encryptedDataStream = SaveCipher.GetEncryptedSaveStream(minifiedJson);
         using var streamRef = new DotNetStreamReference(encryptedDataStream);
 
         await JS.InvokeVoidAsync("downloadFileFromStream", Path.ChangeExtension(_savePicker.FileName, ".dat"), streamRef);

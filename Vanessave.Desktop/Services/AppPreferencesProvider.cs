@@ -10,11 +10,11 @@ public class AppPreferencesProvider : IAppPreferencesProvider
 {
     public event IAppPreferencesProvider.PreferenceChangedHandler? PreferenceChanged;
 
-    private readonly VanessaveSettingsProvider _settingsProvider;
+    private readonly SettingsProvider _settingsProvider;
 
     private VanessaveSettings Settings => _settingsProvider.Settings;
 
-    public AppPreferencesProvider(VanessaveSettingsProvider settingsProvider)
+    public AppPreferencesProvider(SettingsProvider settingsProvider)
     {
         _settingsProvider = settingsProvider;
     }

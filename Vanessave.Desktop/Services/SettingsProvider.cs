@@ -7,16 +7,16 @@ using Vanessave.Shared.Utils;
 
 namespace Vanessave.Desktop.Services;
 
-public class VanessaveSettingsProvider
+public class SettingsProvider
 {
     public VanessaveSettings Settings { get; private set; } = null!;
 
     private const string SettingsFileName = "Settings.json";
     private static FileInfo SettingsFile { get; } = new(Path.Combine(Environment.CurrentDirectory, SettingsFileName));
 
-    private readonly ILogger<VanessaveSettingsProvider> _logger;
+    private readonly ILogger<SettingsProvider> _logger;
 
-    public VanessaveSettingsProvider(ILogger<VanessaveSettingsProvider> logger)
+    public SettingsProvider(ILogger<SettingsProvider> logger)
     {
         _logger = logger;
 

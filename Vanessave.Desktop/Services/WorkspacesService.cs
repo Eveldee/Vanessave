@@ -23,13 +23,13 @@ public class WorkspacesService
     private const string GameExecutableName = "LittleWitchNobeta.exe";
 
     private readonly ILogger<WorkspacesService> _logger;
-    private readonly VanessaveSettingsProvider _settingsProvider;
+    private readonly SettingsProvider _settingsProvider;
     private readonly TabBarService _tabBarService;
     private readonly SaveCipherProvider _saveCipherProvider;
 
     private VanessaveSettings Settings => _settingsProvider.Settings;
 
-    public WorkspacesService(ILogger<WorkspacesService> logger, VanessaveSettingsProvider settingsProvider, TabBarService tabBarService, SaveCipherProvider saveCipherProvider)
+    public WorkspacesService(ILogger<WorkspacesService> logger, SettingsProvider settingsProvider, TabBarService tabBarService, SaveCipherProvider saveCipherProvider)
     {
         _logger = logger;
         _settingsProvider = settingsProvider;
@@ -114,29 +114,37 @@ public class WorkspacesService
             foreach (var gameSaveFile in workspace.GameSavesDirectory.EnumerateFiles("*.dat", SearchOption.TopDirectoryOnly)
                          .Where(saveFile => saveFile.Name.Length == 14 && saveFile.Name.StartsWith(NobetaUtils.GameSavePrefix)))
             {
-                // Load save
-                await using var gameSaveStream = gameSaveFile.OpenRead();
-                var gameSave = JsonUtils.LoadGameSave(_saveCipherProvider.GetDecryptStream(gameSaveStream));
-
-                if (gameSave is null)
+                try
                 {
-                    _logger.LogWarning("Unable to load save at '{Path}', skipping...", gameSaveFile.FullName);
+                    // Load save
+                    await using var decryptStream = _saveCipherProvider.GetDecryptStream(gameSaveFile.OpenRead());
+                    var gameSave = await JsonUtils.LoadGameSaveAsync(decryptStream);
 
-                    continue;
+                    if (gameSave is null)
+                    {
+                        _logger.LogWarning("Unable to load save at '{Path}', skipping...", gameSaveFile.FullName);
+
+                        continue;
+                    }
+
+                    gameSaveInfos.Add(new SaveInfo(
+                        SaveType.GameSave,
+                        $"Slot {gameSave.Basic.DataIndex}",
+                        NobetaUtils.StageToFriendlyName(gameSave),
+                        gameSave.Basic.Difficulty,
+                        gameSave.Basic.GameCleared,
+                        gameSaveFile.FullName
+                    ));
                 }
-
-                gameSaveInfos.Add(new SaveInfo(
-                    SaveType.GameSave,
-                    $"Slot {gameSave.Basic.DataIndex:D2}",
-                    NobetaUtils.StageToFriendlyName(gameSave),
-                    gameSave.Basic.Difficulty,
-                    gameSave.Basic.GameCleared,
-                    gameSaveFile.FullName
-                ));
+                catch (Exception e)
+                {
+                    _logger.LogWarning("Unable to load save at '{Path}': {Error}, skipping...", gameSaveFile.FullName, e.Message);
+                }
             }
         }
 
         // Load savestates (if present)
+        // TODO
 
         // Return data
         return new WorkspaceData(workspace.Path, gameSaveInfos, null);

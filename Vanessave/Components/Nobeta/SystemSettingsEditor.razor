@@ -84,7 +84,7 @@ else
         // Write new settings and download it
         var settingsText = JsonUtils.WriteSave(SystemSettings);
 
-        await using var encryptedDataStream = SaveCipher.GetEncryptStream(settingsText);
+        await using var encryptedDataStream = SaveCipher.GetEncryptedSaveStream(settingsText);
         using var streamRef = new DotNetStreamReference(encryptedDataStream);
 
         await JS.InvokeVoidAsync("downloadFileFromStream", "System.dat", streamRef);

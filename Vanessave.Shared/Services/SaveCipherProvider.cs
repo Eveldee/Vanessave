@@ -33,12 +33,17 @@ public sealed class SaveCipherProvider : IDisposable
         return new CryptoStream(save, _aes.CreateDecryptor(), CryptoStreamMode.Read);
     }
 
-    public Stream GetEncryptStream(string save)
+    public Stream GetEncryptedSaveStream(string save)
     {
         var saveStream = new MemoryStream(Encoding.UTF8.GetBytes(save));
         var encryptor = new CryptoStream(saveStream, _aes.CreateEncryptor(), CryptoStreamMode.Read);
 
         return encryptor;
+    }
+
+    public Stream GetEncryptStream(Stream stream)
+    {
+        return new CryptoStream(stream, _aes.CreateEncryptor(), CryptoStreamMode.Write);
     }
 
     public void Dispose()

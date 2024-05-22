@@ -8,28 +8,43 @@
 @inject SavesManager SavesManager
 @inject HotKeys Hotkeys
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
-<div class="d-flex flex-column">
-    <MudStack Row="true">
-        <MudText Typo="Typo.h3" Color="Color.Secondary">@Workspace.Name</MudText>
-        <MudSpacer/>
-        <MudTooltip RootClass="d-flex" Text="Refresh (F5)">
-            <MudButton Class="action-button" Size="Size.Large" IconSize="Size.Large" Variant="Variant.Outlined"
-                       StartIcon="@Icons.Material.Filled.Refresh" OnClick="RefreshWorkspace">
-                Refresh
-            </MudButton>
-        </MudTooltip>
-    </MudStack>
+@if (_workspaceData is null)
+{
+    <div class="d-grid justify-center align-center">
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column">
+        <MudStack Row="true">
+            <MudText Typo="Typo.h3" Color="Color.Secondary">@Workspace.Name</MudText>
+            <MudSpacer/>
+            <MudTooltip RootClass="d-flex" Text="Manually load a save file">
+                <MudButton Class="action-button" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.FileOpen" OnClick="LoadSave">
+                    Load Save
+                </MudButton>
+            </MudTooltip>
+            <MudTooltip RootClass="d-flex" Text="Refresh (F5)">
+                <MudButton Class="action-button" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Refresh" OnClick="RefreshWorkspace">
+                    Refresh
+                </MudButton>
+            </MudTooltip>
+        </MudStack>
 
-    <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
-             Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true"
-             IconColor="Color.Secondary" SliderColor="Color.Secondary" TabPanelClass="workspace-tab">
-        <MudTabPanel Icon="@Icons.Material.Filled.Save" Text="Saves">
-            @foreach (var (saveInfo, first) in _workspaceData.GameSaveInfos.WithFirst())
-            {
+        <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
+                 Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true"
+                 IconColor="Color.Secondary" SliderColor="Color.Secondary" TabPanelClass="workspace-tab">
+            <MudTabPanel Icon="@Icons.Material.Filled.Save" Text="Saves">
+                @foreach (var (saveInfo, first) in _workspaceData.GameSaveInfos.OrderBy(saveInfo => saveInfo.SaveName).WithFirst())
+                {
                     if (!first)
                     {
-                        <MudDivider DividerType="DividerType.FullWidth" />
+                        <MudDivider DividerType="DividerType.FullWidth"/>
                     }
 
                     <MudStack Row="true">
@@ -44,33 +59,37 @@
                             <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(saveInfo)"/>
                         </MudTooltip>
                     </MudStack>
-            }
-        </MudTabPanel>
-
-        <MudTabPanel Icon="@Icons.Material.Filled.Settings" Text="Settings">
-            Settings
-        </MudTabPanel>
-
-        @if (_workspaceData.SavestatesData is { } savestatesData)
-        {
-            <MudTabPanel Icon="@Icons.Material.Filled.SaveAlt" Text="SaveStates">
-                SaveStates
+                }
             </MudTabPanel>
-        }
-    </MudTabs>
-</div>
+
+            <MudTabPanel Icon="@Icons.Material.Filled.Settings" Text="Settings">
+                Settings
+            </MudTabPanel>
+
+            @if (_workspaceData.SavestatesData is { } savestatesData)
+            {
+                <MudTabPanel Icon="@Icons.Material.Filled.SaveAlt" Text="SaveStates">
+                    SaveStates
+                </MudTabPanel>
+            }
+        </MudTabs>
+    </div>
+}
 
 @code {
 
     [Parameter, EditorRequired]
     public Workspace Workspace { get; set; } = null!;
 
-    private WorkspaceData _workspaceData = null!;
+    private WorkspaceData? _workspaceData;
     private HotKeysContext? _hotKeysContext;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
-        _workspaceData = await WorkspacesService.LoadWorkspaceData(Workspace);
+        if (_workspaceData is null)
+        {
+            await RefreshWorkspace();
+        }
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -89,11 +108,15 @@
 
     private void EditSave(SaveInfo saveInfo)
     {
-
     }
 
     private async Task DeleteButtonClick(SaveInfo saveInfo)
     {
+        if (_workspaceData is null)
+        {
+            return;
+        }
+
         var parameters = new DialogParameters<ConfirmDialog>
         {
             { confirmDialog => confirmDialog.ConfirmMessage, "This action is irreversible" }
@@ -110,6 +133,34 @@
         SavesManager.DeleteSave(_workspaceData, saveInfo);
 
         StateHasChanged();
+    }
+
+    private async Task LoadSave()
+    {
+        // Pick a save file
+        if (await SavesManager.PickSaveFile() is not { } gameSave)
+        {
+            Snackbar.AddError("Invalid save file");
+
+            return;
+        }
+
+        // Select a slot
+        var dialog = await DialogService.ShowAsync<SelectSlotDialog>("Load a save from file");
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        var slotIndex = (int) result.Data;
+
+        // Load save
+        if (await SavesManager.LoadGameSave(Snackbar, Workspace, gameSave, slotIndex))
+        {
+            await RefreshWorkspace();
+        }
     }
 
     public void Dispose()

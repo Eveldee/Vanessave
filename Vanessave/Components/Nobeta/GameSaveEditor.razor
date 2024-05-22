@@ -58,11 +58,11 @@ else
         }
     }
 
-    private Task OnSaveLoad(string settings)
+    private Task OnSaveLoad(string gameSave)
     {
         try
         {
-            GameSave = JsonUtils.LoadGameSave(settings);
+            GameSave = JsonUtils.LoadGameSave(gameSave);
 
             StateHasChanged();
         }
@@ -84,7 +84,7 @@ else
         // Write new settings and download it
         var saveText = JsonUtils.WriteSave(GameSave);
 
-        await using var encryptedDataStream = SaveCipher.GetEncryptStream(saveText);
+        await using var encryptedDataStream = SaveCipher.GetEncryptedSaveStream(saveText);
         using var streamRef = new DotNetStreamReference(encryptedDataStream);
 
         await JS.InvokeVoidAsync("downloadFileFromStream", $"GameSave{GameSave.Basic.DataIndex:D2}.dat", streamRef);

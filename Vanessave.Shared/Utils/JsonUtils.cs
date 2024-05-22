@@ -30,6 +30,11 @@ public static class JsonUtils
         return JsonSerializer.Serialize(gameSave, SaveOptions);
     }
 
+    public static async Task WriteSaveAsync(GameSave gameSave, Stream destination)
+    {
+        await JsonSerializer.SerializeAsync(destination, gameSave, SaveOptions);
+    }
+
     public static SystemSettings? LoadSystemSettings(string settings)
     {
         return JsonSerializer.Deserialize<SystemSettings>(settings, SaveOptions);
@@ -40,9 +45,9 @@ public static class JsonUtils
         return JsonSerializer.Deserialize<GameSave>(gameSave, SaveOptions);
     }
 
-    public static GameSave? LoadGameSave(Stream gameSave)
+    public static async Task<GameSave?> LoadGameSaveAsync(Stream gameSave)
     {
-        return JsonSerializer.Deserialize<GameSave>(gameSave, SaveOptions);
+        return await JsonSerializer.DeserializeAsync<GameSave>(gameSave, SaveOptions);
     }
 
     public static string Prettify(string minimizedJson)
