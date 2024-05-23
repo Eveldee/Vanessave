@@ -69,6 +69,32 @@ public class SavesManager
         return await ReadGameSave(fileInfo);
     }
 
+    public async Task<FileInfo?> PickSaveAs(string defaultName)
+    {
+        // Run on thread pool to avoid UI lock and crash
+        NfdStatus? dialogResult = null;
+        string? path = null;
+
+        await Task.Run(() =>
+        {
+            try
+            {
+                dialogResult = Nfd.SaveDialog(out path, FileUtils.SaveFilters, defaultName);
+            }
+            catch
+            {
+                dialogResult = null;
+            }
+        });
+
+        if (dialogResult != NfdStatus.Ok || path is null)
+        {
+            return null;
+        }
+
+        return new FileInfo(path);
+    }
+
     public async Task<bool> LoadGameSave(ISnackbar snackbar, Workspace workspace, GameSave gameSave, int slotIndex)
     {
         var destinationFile = GetGameSaveSlotFile(workspace, slotIndex);

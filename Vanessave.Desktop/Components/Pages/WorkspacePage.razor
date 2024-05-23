@@ -1,4 +1,5 @@
-﻿@using Toolbelt.Blazor.HotKeys2
+﻿@using System.IO
+@using Toolbelt.Blazor.HotKeys2
 @using Vanessave.Desktop.Components.Dialogs
 @using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
@@ -55,8 +56,11 @@ else
                         <MudTooltip RootClass="d-flex" Text="Edit">
                             <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
                         </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Save copy to...">
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.SaveAs" OnClick="() => SaveAsButtonClick(saveInfo)"/>
+                        </MudTooltip>
                         <MudTooltip RootClass="d-flex" Text="Delete">
-                            <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" @onclick="() => DeleteButtonClick(saveInfo)"/>
+                            <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteButtonClick(saveInfo)"/>
                         </MudTooltip>
                     </MudStack>
                 }
@@ -122,7 +126,7 @@ else
             { confirmDialog => confirmDialog.ConfirmMessage, "This action is irreversible" }
         };
 
-        var dialog = await DialogService.ShowAsync<ConfirmDialog>("Delete save?", parameters);
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>($"Delete save {saveInfo.SaveName}?", parameters);
         var result = await dialog.Result;
 
         if (result.Canceled)
@@ -131,6 +135,25 @@ else
         }
 
         SavesManager.DeleteSave(_workspaceData, saveInfo);
+    }
+
+    private async Task SaveAsButtonClick(SaveInfo saveInfo)
+    {
+        if (await SavesManager.PickSaveAs(Path.GetFileName(saveInfo.FilePath)) is not { } fileInfo)
+        {
+            return;
+        }
+
+        try
+        {
+            File.Copy(saveInfo.FilePath, fileInfo.FullName, true);
+
+            Snackbar.AddSuccess($"Successfully exported '{saveInfo.SaveName}' to '{fileInfo.FullName}'");
+        }
+        catch (Exception e)
+        {
+            Snackbar.AddError($"An error occured while exporting '{saveInfo.SaveName}' to '{fileInfo.FullName}': {e.Message}");
+        }
     }
 
     private async Task LoadSave()
