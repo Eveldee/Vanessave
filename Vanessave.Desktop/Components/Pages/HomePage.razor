@@ -71,8 +71,6 @@
                 await RenameButtonClick(workspace, false);
             }
 
-            StateHasChanged();
-
             OpenWorkspace(workspace);
         }
     }
@@ -104,16 +102,11 @@
         }
 
         WorkspacesService.UpdateName(workspace, (string)result.Data);
-
-        StateHasChanged();
     }
 
     private void DeleteButtonClick(Workspace workspace)
     {
-        if (WorkspacesService.Remove(workspace))
-        {
-            StateHasChanged();
-        }
+        WorkspacesService.Remove(workspace);
     }
 
 }
