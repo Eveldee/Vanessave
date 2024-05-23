@@ -114,9 +114,23 @@ public class SavesManager
 
         return true;
     }
+    public async Task<bool> LoadGameSave(ISnackbar snackbar, Workspace workspace, FileInfo gameSaveFile, int slotIndex)
+    {
+        if (await ReadGameSave(gameSaveFile) is { } gameSave)
+        {
+            return await LoadGameSave(snackbar, workspace, gameSave, slotIndex);
+        }
+
+        return false;
+    }
 
     private async Task<GameSave?> ReadGameSave(FileInfo fileInfo)
     {
+        if (!fileInfo.Exists)
+        {
+            return null;
+        }
+
         try
         {
             await using var decryptStream = _saveCipherProvider.GetDecryptStream(fileInfo.OpenRead());

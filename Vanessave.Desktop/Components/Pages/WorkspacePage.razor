@@ -49,15 +49,18 @@ else
                     }
 
                     <MudStack Row="true">
-                        <div class="py-5 flex-1 workspace" @onclick="() => EditSave(saveInfo)">
+                        <div class="py-5 flex-1 save" @onclick="() => EditSave(saveInfo)">
                             <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
                             <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
                         </div>
                         <MudTooltip RootClass="d-flex" Text="Edit">
-                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
+                            <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
+                        </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Copy to slot">
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.ContentCopy" OnClick="() => CopyToSlotButtonClick(saveInfo)"/>
                         </MudTooltip>
                         <MudTooltip RootClass="d-flex" Text="Save copy to...">
-                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.SaveAs" OnClick="() => SaveAsButtonClick(saveInfo)"/>
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Share" OnClick="() => SaveAsButtonClick(saveInfo)"/>
                         </MudTooltip>
                         <MudTooltip RootClass="d-flex" Text="Delete">
                             <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteButtonClick(saveInfo)"/>
@@ -153,6 +156,28 @@ else
         catch (Exception e)
         {
             Snackbar.AddError($"An error occured while exporting '{saveInfo.SaveName}' to '{fileInfo.FullName}': {e.Message}");
+        }
+    }
+
+    private async Task CopyToSlotButtonClick(SaveInfo saveInfo)
+    {
+        // Select a slot
+        var dialog = await DialogService.ShowAsync<SelectSlotDialog>("Copy save to slot");
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        var slotIndex = (int) result.Data;
+
+        // Load save
+        if (await SavesManager.LoadGameSave(Snackbar, Workspace, new FileInfo(saveInfo.FilePath), slotIndex))
+        {
+            await RefreshWorkspace();
+
+            Snackbar.AddSuccess($"Successfully copied {saveInfo.SaveName} to Slot {slotIndex}");
         }
     }
 
