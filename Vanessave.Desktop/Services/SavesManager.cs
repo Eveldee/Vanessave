@@ -5,7 +5,7 @@ using MudBlazor;
 using NativeFileDialogs.Net;
 using Vanessave.Desktop.Models;
 using Vanessave.Desktop.Utils;
-using Vanessave.Shared.Nobeta;
+using Vanessave.Shared.Models.Nobeta;
 using Vanessave.Shared.Services;
 using Vanessave.Shared.Utils;
 using Vanessave.Shared.Utils.Extensions;
@@ -144,11 +144,20 @@ public class SavesManager
         }
     }
 
+    public Task<GameSave?> ReadGameSave(SaveInfo saveInfo)
+    {
+        return ReadGameSave(new FileInfo(saveInfo.FilePath));
+    }
+
     private async Task WriteGameSave(GameSave gameSave, FileInfo destination)
     {
         await using var destinationStream = _saveCipherProvider.GetEncryptStream(destination.Create());
 
         await JsonUtils.WriteSaveAsync(gameSave, destinationStream);
+    }
+    public Task WriteGameSave(SaveInfo saveInfo, GameSave gameSave)
+    {
+        return WriteGameSave(gameSave, new FileInfo(saveInfo.FilePath));
     }
 
     private async Task<bool> IsValidGameSave(FileInfo fileInfo)

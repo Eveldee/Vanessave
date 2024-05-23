@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<SaveCipherProvider>();
         serviceCollection.AddSingleton<AchievementMetadataProvider>();
         serviceCollection.AddSingleton<ValuablesMetadataProvider>();
+        serviceCollection.AddSingleton<FabService>();
 
         return serviceCollection;
     }

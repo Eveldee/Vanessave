@@ -6,6 +6,7 @@
 @using Vanessave.Shared.Utils.Extensions
 @implements IDisposable
 @inject WorkspacesService WorkspacesService
+@inject TabBarService TabBarService
 @inject SavesManager SavesManager
 @inject HotKeys Hotkeys
 @inject IDialogService DialogService
@@ -21,7 +22,7 @@ else
 {
     <div class="d-flex flex-column">
         <MudStack Row="true">
-            <MudText Typo="Typo.h3" Color="Color.Secondary">@Workspace.Name</MudText>
+            <MudText Typo="Typo.h3" Color="Color.Secondary">@($"Installation - {Workspace.Name}")</MudText>
             <MudSpacer/>
             <MudTooltip RootClass="d-flex" Text="Manually load a save file">
                 <MudButton Class="action-button" Variant="Variant.Outlined"
@@ -115,6 +116,7 @@ else
 
     private void EditSave(SaveInfo saveInfo)
     {
+        TabBarService.OpenSave(saveInfo);
     }
 
     private async Task DeleteButtonClick(SaveInfo saveInfo)

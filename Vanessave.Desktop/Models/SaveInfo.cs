@@ -1,4 +1,4 @@
-using Vanessave.Shared.Nobeta;
+using Vanessave.Shared.Models.Nobeta;
 
 namespace Vanessave.Desktop.Models;
 

@@ -1,9 +1,9 @@
-﻿@using Vanessave.Shared.Nobeta
+﻿@using Vanessave.Shared.Models.Nobeta
 @using Position = MudBlazor.Position
 
 <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true" Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true">
     <MudTabPanel Icon="@Icons.Material.Filled.Edit" Text="General">
-        <GeneralEditor GameSave="GameSave"/>
+        <GeneralEditor GameSave="GameSave" HideSaveSlot="@HideSaveSlot"/>
     </MudTabPanel>
     <MudTabPanel Icon="@Icons.Material.Filled.Assessment" Text="Magic and Stats">
         <StatsEditor GameSave="GameSave"/>
@@ -22,4 +22,8 @@
 @code {
     [Parameter, EditorRequired]
     public GameSave GameSave { get; set; } = null!;
+
+    [Parameter]
+    public bool HideSaveSlot { get; set; } = false;
+
 }

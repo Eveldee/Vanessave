@@ -1,5 +1,6 @@
-﻿#main-tab-bar ::deep  > div > div.mud-tabs-panels.px-4 {
-    flex-grow: 1;
+﻿#main-tab-bar ::deep > .mud-tabs > .mud-tabs-toolbar.mud-tabs-border-top {
+    position: sticky;
 
-    display: grid;
+    z-index: 1;
+    top: var(--mud-appbar-height);
 }

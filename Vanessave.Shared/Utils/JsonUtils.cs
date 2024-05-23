@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Vanessave.Shared.Nobeta;
+using Vanessave.Shared.Models.Nobeta;
 
 namespace Vanessave.Shared.Utils;
 

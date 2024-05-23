@@ -1,6 +1,10 @@
-﻿@using Vanessave.Shared.Nobeta
+﻿@using Vanessave.Shared.Models.Nobeta
 <MudStack Spacing="2">
-    <MudNumericField @bind-Value="@GameSave.Basic.DataIndex" Min="1" Max="9" Label="Save Slot"/>
+    @if (!HideSaveSlot)
+    {
+        <MudNumericField @bind-Value="@GameSave.Basic.DataIndex" Min="1" Max="9" Label="Save Slot"/>
+    }
+
     <MudSelect T="GameDifficulty" @bind-Value="@GameSave.Basic.Difficulty" Label="Difficulty">
         @foreach (var value in Enum.GetValues<GameDifficulty>())
         {
@@ -36,4 +40,8 @@
 @code {
     [Parameter, EditorRequired]
     public GameSave GameSave { get; set; } = null!;
+
+    [Parameter]
+    public bool HideSaveSlot { get; set; } = false;
+
 }

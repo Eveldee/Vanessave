@@ -1,4 +1,4 @@
-﻿namespace Vanessave.Shared.Nobeta;
+﻿namespace Vanessave.Shared.Models.Nobeta;
 
 public enum GameSkin
 {

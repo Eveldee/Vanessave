@@ -1,0 +1,59 @@
+@inject IJSRuntime JS
+@using Vanessave.Shared.Services
+@implements IAsyncDisposable
+@inject FabService FabService
+
+<div id="fab-container" class="z-10">
+    <MudStack Reverse="true" AlignItems="AlignItems.Center" Spacing="4">
+        <MudTooltip Text="Scroll to top">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" OnClick="ScrollToTopButtonClick" />
+        </MudTooltip>
+
+        @foreach (var fab in FabService.FabInstances)
+        {
+            <MudTooltip Text="@fab.Tooltip">
+                <MudFab Color="@fab.Color" StartIcon="@fab.Icon" Size="@fab.Size" OnClick="@fab.ClickHandler" />
+            </MudTooltip>
+        }
+    </MudStack>
+</div>
+
+@code {
+
+    private IJSObjectReference? _module;
+
+    protected override void OnInitialized()
+    {
+        FabService.FabsUpdated += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>(
+                "import",
+                "./_content/Vanessave.Shared/Components/FabContainer.razor.js"
+            );
+        }
+    }
+
+    private async Task ScrollToTopButtonClick(MouseEventArgs obj)
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("scrollToTop");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        FabService.FabsUpdated -= StateHasChanged;
+
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+
+}

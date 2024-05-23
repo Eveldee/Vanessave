@@ -1,0 +1,95 @@
+﻿@using Toolbelt.Blazor.HotKeys2
+@using Vanessave.Desktop.Models
+@using Vanessave.Desktop.Services
+@using Vanessave.Shared.Models
+@using Vanessave.Shared.Models.Nobeta
+@using Vanessave.Shared.Services
+@implements IDisposable
+@inject SavesManager SavesManager
+@inject HotKeys Hotkeys
+@inject FabService FabService
+
+<div>
+    @if (_gameSave is null)
+    {
+        <div class="d-grid justify-center align-center">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+        </div>
+    }
+    else
+    {
+        <MudStack Row="true">
+            <MudText Typo="Typo.h3" Color="Color.Secondary">@($"Save - {SaveInfo.SaveName}")</MudText>
+            <MudSpacer/>
+            <MudTooltip RootClass="d-flex" Text="Undo changes">
+                <MudButton Class="action-button" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Undo" OnClick="LoadSave">
+                    Undo
+                </MudButton>
+            </MudTooltip>
+            <MudTooltip RootClass="d-flex" Text="Reload save from disk (F5)">
+                <MudButton Class="action-button" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Refresh" OnClick="LoadSave">
+                    Refresh
+                </MudButton>
+            </MudTooltip>
+        </MudStack>
+
+        <AdvancedEditor GameSave="_gameSave" HideSaveSlot="true" />
+    }
+</div>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public SaveInfo SaveInfo { get; set; } = null!;
+
+    private GameSave? _gameSave;
+    private HotKeysContext? _hotKeysContext;
+    private FabInstance? _saveFab;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_gameSave is null)
+        {
+            await LoadSave();
+        }
+
+        _saveFab = FabService.Add(
+            "Save changes",
+            Icons.Material.Filled.Save,
+            Color.Secondary,
+            EventCallback.Factory.Create(this, SaveFabClick)
+        );
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _hotKeysContext = Hotkeys.CreateContext()
+                .Add(Code.F5, LoadSave, new HotKeyOptions { Exclude = Exclude.None });
+        }
+    }
+
+    public async Task SaveFabClick()
+    {
+        if (_gameSave is not null)
+        {
+            await SavesManager.WriteGameSave(SaveInfo, _gameSave);
+        }
+    }
+
+    private async Task LoadSave()
+    {
+        _gameSave = await SavesManager.ReadGameSave(SaveInfo);
+    }
+
+    public void Dispose()
+    {
+        _hotKeysContext?.Dispose();
+        _saveFab?.Dispose();
+    }
+
+}
+

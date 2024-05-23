@@ -15,7 +15,7 @@
 
 <div class="page mud-layout">
     <main>
-        <MudAppBar Color="Color.Primary" Fixed="false" Elevation="0">
+        <MudAppBar Class="sticky" Color="Color.Primary" Fixed="false" Elevation="0" Style="top: 0;">
             <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Inherit" OnClick="BackButtonClick"
                            Disabled="@(!TabBarService.CanNavigateBack)"/>
             <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" OnClick="HomeButtonClick"/>
@@ -32,6 +32,8 @@
                                  ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="Color.Warning"/>
             <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" OnClick="GithubButtonClick"/>
         </MudAppBar>
+
+        <FabContainer/>
 
         @Body
     </main>

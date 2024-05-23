@@ -175,4 +175,15 @@ public class TabBarService
             caption: "Install"
         ));
     }
+
+    public void OpenSave(SaveInfo saveInfo)
+    {
+        Open(new TabView(
+            name: saveInfo.SaveName,
+            content: builder => builder.AddSimpleComponent<EditSavePage, SaveInfo>(saveInfo),
+            closeable: true,
+            icon: Icons.Material.Filled.Edit,
+            caption: "Save"
+        ));
+    }
 }
