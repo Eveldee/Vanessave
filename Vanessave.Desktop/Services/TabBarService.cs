@@ -130,8 +130,8 @@ public class TabBarService
         }
 
         // Remove this tab from navigation history
-        _previousTabsHistory = new Stack<TabView>(_previousTabsHistory.Where(tab => tab != toRemove));
-        _nextTabsHistory = new Stack<TabView>(_nextTabsHistory.Where(tab => tab != toRemove));
+        _previousTabsHistory = new Stack<TabView>(_previousTabsHistory.Where(tab => tab != toRemove).Reverse());
+        _nextTabsHistory = new Stack<TabView>(_nextTabsHistory.Where(tab => tab != toRemove).Reverse());
 
         // If deleted tab is current, we need to move to previous or home
         if (toRemove == _activeTab)
