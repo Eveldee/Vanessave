@@ -1,0 +1,77 @@
+﻿@using Toolbelt.Blazor.HotKeys2
+@using Vanessave.Desktop.Models
+@using Vanessave.Shared.Models
+@using Vanessave.Shared.Models.Nobeta
+@using Vanessave.Shared.Services
+@using Vanessave.Shared.Utils
+@using Vanessave.Shared.Utils.Extensions
+@using Position = MudBlazor.Position
+@implements IDisposable
+@inject FabService FabService
+@inject SaveCipherProvider SaveCipherProvider
+@inject ISnackbar Snackbar
+@inject HotKeys Hotkeys
+
+<MudTabs Position="Position.Top" Class="ma-n6" Border="true" PanelClass="pa-6" ApplyEffectsToContainer="true">
+    <MudTabPanel Icon="@Icons.Material.Filled.Edit" Text="Stats">
+        <GeneralStats SystemSettings="SystemSettings" />
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Material.Filled.List" Text="Skin Selector">
+        <SkinSelector SystemSettings="SystemSettings" />
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Custom.Uncategorized.ChessRook" Text="Trial Tower">
+        <TrialTower SystemSettings="SystemSettings" />
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Material.Filled.VideoLibrary" Text="Video Unlocker">
+        <VideoUnlocker SystemSettings="SystemSettings" />
+    </MudTabPanel>
+    <MudTabPanel Icon="@Icons.Material.Filled.MenuBook" Text="Achievements">
+        <AchievementsEditor SystemSettings="SystemSettings" />
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public WorkspaceData WorkspaceData { get; set; } = null!;
+
+    private SystemSettings SystemSettings => WorkspaceData.SystemSettings;
+
+    private FabInstance? _saveFab;
+    private HotKeysContext? _hotKeysContext;
+
+    protected override void OnInitialized()
+    {
+        _saveFab = FabService.Add(
+            "Save changes (Ctrl + S)",
+            Icons.Material.Filled.Save,
+            Color.Secondary,
+            EventCallback.Factory.Create(this, WriteSettings)
+        );
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _hotKeysContext = Hotkeys.CreateContext()
+                .Add(ModCode.Ctrl, Code.S, WriteSettings, new HotKeyOptions { Exclude = Exclude.None });
+        }
+    }
+
+    private async Task WriteSettings()
+    {
+        await using var destinationStream = SaveCipherProvider.GetEncryptStream(WorkspaceData.Workspace.SystemSettingsFile.Create());
+
+        await JsonUtils.WriteSystemSettingsAsync(SystemSettings, destinationStream);
+
+        Snackbar.AddSuccess("Changes successfully saved");
+    }
+
+    public void Dispose()
+    {
+        _hotKeysContext?.Dispose();
+        _saveFab?.Dispose();
+    }
+
+}

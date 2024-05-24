@@ -20,6 +20,10 @@ public record Workspace
     public FileInfo SaveStatesConfigFile
         => new(System.IO.Path.Combine(Path, "BepInEx", "config", "NobetaTrainer", "SaveStates.json"));
 
+    [JsonIgnore]
+    public FileInfo SystemSettingsFile
+        => new(System.IO.Path.Combine(Path, "LittleWitchNobeta_Data", "Save", "System.dat"));
+
     public Workspace(string name, string path)
     {
         Name = name;

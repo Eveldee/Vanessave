@@ -82,7 +82,7 @@ else
         }
 
         // Write new settings and download it
-        var settingsText = JsonUtils.WriteSave(SystemSettings);
+        var settingsText = JsonUtils.WriteSystemSettings(SystemSettings);
 
         await using var encryptedDataStream = SaveCipher.GetEncryptedSaveStream(settingsText);
         using var streamRef = new DotNetStreamReference(encryptedDataStream);

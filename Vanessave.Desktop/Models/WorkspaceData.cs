@@ -1,18 +1,22 @@
 using System.Collections.Generic;
+using Vanessave.Shared.Models.Nobeta;
 
 namespace Vanessave.Desktop.Models;
 
 public class WorkspaceData
 {
-    public string RootPath { get; }
+    public Workspace Workspace { get; }
+
+    public SystemSettings SystemSettings { get; }
 
     public List<SaveInfo> GameSaveInfos { get; }
 
     public SavestatesData? SavestatesData { get; }
 
-    public WorkspaceData(string rootPath, List<SaveInfo> gameSaveInfos, SavestatesData? savestatesData)
+    public WorkspaceData(Workspace workspace, SystemSettings systemSettings, List<SaveInfo> gameSaveInfos, SavestatesData? savestatesData)
     {
-        RootPath = rootPath;
+        Workspace = workspace;
+        SystemSettings = systemSettings;
         GameSaveInfos = gameSaveInfos;
         SavestatesData = savestatesData;
     }

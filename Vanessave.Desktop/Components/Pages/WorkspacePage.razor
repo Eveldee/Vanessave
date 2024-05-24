@@ -1,6 +1,7 @@
 ﻿@using System.IO
 @using Toolbelt.Blazor.HotKeys2
 @using Vanessave.Desktop.Components.Dialogs
+@using Vanessave.Desktop.Components.Nobeta
 @using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
 @using Vanessave.Shared.Utils.Extensions
@@ -71,7 +72,7 @@ else
             </MudTabPanel>
 
             <MudTabPanel Icon="@Icons.Material.Filled.Settings" Text="Settings">
-                Settings
+                <SystemSettingsEditor WorkspaceData="_workspaceData" />
             </MudTabPanel>
 
             @if (_workspaceData.SavestatesData is { } savestatesData)

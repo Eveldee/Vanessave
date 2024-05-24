@@ -21,15 +21,19 @@ public static class JsonUtils
         WriteIndented = false
     };
 
-    public static string WriteSave(SystemSettings settings)
+    public static string WriteSystemSettings(SystemSettings settings)
     {
         return JsonSerializer.Serialize(settings, SaveOptions);
     }
+    public static async Task WriteSystemSettingsAsync(SystemSettings settings, Stream destination)
+    {
+        await JsonSerializer.SerializeAsync(destination, settings, SaveOptions);
+    }
+
     public static string WriteSave(GameSave gameSave)
     {
         return JsonSerializer.Serialize(gameSave, SaveOptions);
     }
-
     public static async Task WriteSaveAsync(GameSave gameSave, Stream destination)
     {
         await JsonSerializer.SerializeAsync(destination, gameSave, SaveOptions);
@@ -39,12 +43,15 @@ public static class JsonUtils
     {
         return JsonSerializer.Deserialize<SystemSettings>(settings, SaveOptions);
     }
+    public static async Task<SystemSettings?> LoadSystemSettingsAsync(Stream systemSettings)
+    {
+        return await JsonSerializer.DeserializeAsync<SystemSettings>(systemSettings, SaveOptions);
+    }
 
     public static GameSave? LoadGameSave(string gameSave)
     {
         return JsonSerializer.Deserialize<GameSave>(gameSave, SaveOptions);
     }
-
     public static async Task<GameSave?> LoadGameSaveAsync(Stream gameSave)
     {
         return await JsonSerializer.DeserializeAsync<GameSave>(gameSave, SaveOptions);

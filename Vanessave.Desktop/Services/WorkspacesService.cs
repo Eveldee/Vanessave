@@ -106,6 +106,15 @@ public class WorkspacesService
 
     public async Task<WorkspaceData> LoadWorkspaceData(Workspace workspace)
     {
+        // Load system settings
+        await using var systemSettingsStream = _saveCipherProvider.GetDecryptStream(workspace.SystemSettingsFile.OpenRead());
+        var systemSettings = await JsonUtils.LoadSystemSettingsAsync(systemSettingsStream);
+
+        if (systemSettings is null)
+        {
+            _logger.LogError("Couldn't load system settings for workspace '{Name}'", workspace.Name);
+        }
+
         // Load game saves
         var gameSaveInfos = new List<SaveInfo>();
 
@@ -147,6 +156,6 @@ public class WorkspacesService
         // TODO
 
         // Return data
-        return new WorkspaceData(workspace.Path, gameSaveInfos, null);
+        return new WorkspaceData(workspace, systemSettings!, gameSaveInfos, null);
     }
 }
