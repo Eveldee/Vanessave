@@ -16,7 +16,7 @@
 @if (_workspaceData is null)
 {
     <div class="d-grid justify-center align-center">
-        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
     </div>
 }
 else
@@ -72,13 +72,44 @@ else
             </MudTabPanel>
 
             <MudTabPanel Icon="@Icons.Material.Filled.Settings" Text="Settings">
-                <SystemSettingsEditor WorkspaceData="_workspaceData" />
+                <SystemSettingsEditor WorkspaceData="_workspaceData"/>
             </MudTabPanel>
 
             @if (_workspaceData.SavestatesData is { } savestatesData)
             {
                 <MudTabPanel Icon="@Icons.Material.Filled.SaveAlt" Text="SaveStates">
-                    SaveStates
+                    <MudTabs Position="Position.Top" Class="ma-n6" Border="true" PanelClass="pa-6" ApplyEffectsToContainer="true">
+                        @foreach (var group in savestatesData.SaveStateInfos
+                                      .GroupBy(pair => pair.Key.GroupName)
+                                      .OrderBy(group => group.Key))
+                        {
+                            <MudTabPanel Text="@group.Key">
+                                @foreach (var ((saveState, saveInfo), first) in group.OrderBy(pair => pair.Value.SaveName).WithFirst())
+                                {
+                                    if (!first)
+                                    {
+                                        <MudDivider DividerType="DividerType.FullWidth"/>
+                                    }
+
+                                    <MudStack Row="true">
+                                        <div class="py-5 flex-1 save" @onclick="() => EditSave(saveInfo)">
+                                            <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
+                                            <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
+                                        </div>
+                                        <MudTooltip RootClass="d-flex" Text="Edit">
+                                            <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
+                                        </MudTooltip>
+                                        <MudTooltip RootClass="d-flex" Text="Copy to slot">
+                                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.ContentCopy" OnClick="() => CopyToSlotButtonClick(saveInfo)"/>
+                                        </MudTooltip>
+                                        <MudTooltip RootClass="d-flex" Text="Save copy to...">
+                                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Share" OnClick="() => SaveAsButtonClick(saveInfo)"/>
+                                        </MudTooltip>
+                                    </MudStack>
+                                }
+                            </MudTabPanel>
+                        }
+                    </MudTabs>
                 </MudTabPanel>
             }
         </MudTabs>
@@ -145,14 +176,14 @@ else
 
     private async Task SaveAsButtonClick(SaveInfo saveInfo)
     {
-        if (await SavesManager.PickSaveAs(Path.GetFileName(saveInfo.FilePath)) is not { } fileInfo)
+        if (await SavesManager.PickSaveAs(saveInfo.File.Name) is not { } fileInfo)
         {
             return;
         }
 
         try
         {
-            File.Copy(saveInfo.FilePath, fileInfo.FullName, true);
+            saveInfo.File.CopyTo(fileInfo.FullName, true);
 
             Snackbar.AddSuccess($"Successfully exported '{saveInfo.SaveName}' to '{fileInfo.FullName}'");
         }
@@ -176,7 +207,7 @@ else
         var slotIndex = (int) result.Data;
 
         // Load save
-        if (await SavesManager.LoadGameSave(Snackbar, Workspace, new FileInfo(saveInfo.FilePath), slotIndex))
+        if (await SavesManager.LoadGameSave(Snackbar, Workspace, saveInfo.File, slotIndex))
         {
             await RefreshWorkspace();
 

@@ -1,3 +1,4 @@
+using System.IO;
 using Vanessave.Shared.Models.Nobeta;
 
 namespace Vanessave.Desktop.Models;
@@ -14,15 +15,15 @@ public record SaveInfo
 
     public int ClearedCount { get; }
 
-    public string FilePath { get; private set; }
+    public FileInfo File { get; private set; }
 
-    public SaveInfo(SaveType saveType, string saveName, string stageName, GameDifficulty difficulty, int clearedCount, string filePath)
+    public SaveInfo(SaveType saveType, string saveName, string stageName, GameDifficulty difficulty, int clearedCount, FileInfo file)
     {
         SaveType = saveType;
         SaveName = saveName;
         StageName = stageName;
         Difficulty = difficulty;
         ClearedCount = clearedCount;
-        FilePath = filePath;
+        File = file;
     }
 }

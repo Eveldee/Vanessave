@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
@@ -142,7 +143,7 @@ public class WorkspacesService
                         NobetaUtils.StageToFriendlyName(gameSave),
                         gameSave.Basic.Difficulty,
                         gameSave.Basic.GameCleared,
-                        gameSaveFile.FullName
+                        gameSaveFile
                     ));
                 }
                 catch (Exception e)
@@ -153,9 +154,19 @@ public class WorkspacesService
         }
 
         // Load savestates (if present)
-        // TODO
+        SavestatesData? saveStatesData = null;
+        if (workspace.SaveStatesConfigFile.Exists)
+        {
+            await using var saveStatesConfigStream = workspace.SaveStatesConfigFile.OpenRead();
+            var saveStates = await JsonSerializer.DeserializeAsync<List<SaveState>>(saveStatesConfigStream);
+
+            if (saveStates is not null)
+            {
+                saveStatesData = new SavestatesData(workspace, saveStates);
+            }
+        }
 
         // Return data
-        return new WorkspaceData(workspace, systemSettings!, gameSaveInfos, null);
+        return new WorkspaceData(workspace, systemSettings!, gameSaveInfos, saveStatesData);
     }
 }

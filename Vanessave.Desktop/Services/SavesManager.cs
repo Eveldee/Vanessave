@@ -33,12 +33,11 @@ public class SavesManager
             case SaveType.SaveState:
                 // TODO
                 throw new NotImplementedException();
-                break;
             default:
                 throw new ArgumentException("SaveInfo can only be of type GameSave or SaveState", nameof(saveInfo));
         }
 
-        File.Delete(saveInfo.FilePath);
+        saveInfo.File.Delete();
     }
 
     public async Task<GameSave?> PickSaveFile()
@@ -97,7 +96,7 @@ public class SavesManager
 
     public async Task<bool> LoadGameSave(ISnackbar snackbar, Workspace workspace, GameSave gameSave, int slotIndex)
     {
-        var destinationFile = GetGameSaveSlotFile(workspace, slotIndex);
+        var destinationFile = workspace.GetGameSaveSlotFile(slotIndex);
 
         // Check override if save already exists
         if (destinationFile.Exists && !_settingsProvider.Settings.OverrideSaveOnLoad)
@@ -143,10 +142,9 @@ public class SavesManager
             return null;
         }
     }
-
     public Task<GameSave?> ReadGameSave(SaveInfo saveInfo)
     {
-        return ReadGameSave(new FileInfo(saveInfo.FilePath));
+        return ReadGameSave(saveInfo.File);
     }
 
     private async Task WriteGameSave(GameSave gameSave, FileInfo destination)
@@ -157,7 +155,7 @@ public class SavesManager
     }
     public Task WriteGameSave(SaveInfo saveInfo, GameSave gameSave)
     {
-        return WriteGameSave(gameSave, new FileInfo(saveInfo.FilePath));
+        return WriteGameSave(gameSave, saveInfo.File);
     }
 
     private async Task<bool> IsValidGameSave(FileInfo fileInfo)
@@ -173,15 +171,5 @@ public class SavesManager
         {
             return false;
         }
-    }
-
-    public static FileInfo GetGameSaveSlotFile(Workspace workspace, int slotIndex)
-    {
-        if (slotIndex is < 1 or > 9)
-        {
-            throw new ArgumentOutOfRangeException(nameof(slotIndex), "Slot index must be between 1 and 9");
-        }
-
-        return new FileInfo(Path.Combine(workspace.GameSavesDirectory.FullName, $"{NobetaUtils.GameSavePrefix}{slotIndex:D1}.dat"));
     }
 }
