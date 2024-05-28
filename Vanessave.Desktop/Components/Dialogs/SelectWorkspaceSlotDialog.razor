@@ -1,0 +1,57 @@
+﻿@using Vanessave.Desktop.Models
+@using Vanessave.Desktop.Services
+@using Vanessave.Shared.Utils.Extensions
+@inject SettingsProvider SettingsProvider
+@inject WorkspacesService WorkspacesService
+@inject SavesManager SavesManager
+@inject ISnackbar Snackbar
+
+<MudDialog DefaultFocus="DefaultFocus.FirstChild">
+    <DialogContent>
+        <MudSelect T="Workspace" Label="Workspace" @bind-Value="Workspace">
+            @foreach (var workspace in WorkspacesService.Workspaces)
+            {
+                <MudSelectItem Value="workspace">@workspace.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="int" Label="Slot" @bind-Value="SaveSlot">
+            @foreach (var index in Enumerable.Range(1, 9))
+            {
+                <MudSelectItem Value="index">@($"Slot {index}")</MudSelectItem>
+            }
+        </MudSelect>
+        <MudCheckBox @bind-Value="Settings.OverrideSaveOnLoad" Color="Color.Secondary" Class="ml-n4 mt-2">Override existing save</MudCheckBox>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Close</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Load">Load</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance Dialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public SaveInfo SaveToLoad { get; set; } = null!;
+
+    public Workspace? Workspace { get; set; }
+    public int SaveSlot { get; set; } = 1;
+
+    private VanessaveSettings Settings => SettingsProvider.Settings;
+
+    private async Task Load()
+    {
+        if (Workspace is null)
+        {
+            return;
+        }
+
+        if (await SavesManager.LoadGameSave(Snackbar, Workspace, SaveToLoad.File, SaveSlot))
+        {
+            Snackbar.AddInfo($"Loaded save '{SaveToLoad.SaveName}' into '{Workspace.Name}' Slot {SaveSlot}");
+        }
+    }
+
+}

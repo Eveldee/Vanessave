@@ -49,6 +49,9 @@
                         <MudTooltip RootClass="d-flex" Text="Edit">
                             <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
                         </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Copy to installation">
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.ContentCopy" OnClick="() => CopyToInstallationButtonClick(saveInfo)"/>
+                        </MudTooltip>
                         <MudTooltip RootClass="d-flex" Text="Move or Rename">
                             <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.DriveFileMove" OnClick="() => RenameButtonClick(groupName, saveInfo)"/>
                         </MudTooltip>
@@ -100,6 +103,17 @@
     private void EditSave(SaveInfo saveInfo)
     {
         TabBarService.OpenSave(saveInfo);
+    }
+
+    private async Task CopyToInstallationButtonClick(SaveInfo saveInfo)
+    {
+        var parameters = new DialogParameters<SelectWorkspaceSlotDialog>
+        {
+            { selectWorkspaceSlotDialog => selectWorkspaceSlotDialog.SaveToLoad, saveInfo }
+        };
+
+        var dialog = await DialogService.ShowAsync<SelectWorkspaceSlotDialog>("Copy to installation", parameters);
+        _ = await dialog.Result;
     }
 
     private async Task RenameButtonClick(string group, SaveInfo saveInfo)
