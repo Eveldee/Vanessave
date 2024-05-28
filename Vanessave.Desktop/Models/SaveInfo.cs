@@ -7,7 +7,7 @@ public record SaveInfo
 {
     public SaveType SaveType { get; }
 
-    public string SaveName { get; private set; }
+    public string SaveName { get; init; }
 
     public string StageName { get; }
 
@@ -15,7 +15,7 @@ public record SaveInfo
 
     public int ClearedCount { get; }
 
-    public FileInfo File { get; private set; }
+    public FileInfo File { get; init; }
 
     public SaveInfo(SaveType saveType, string saveName, string stageName, GameDifficulty difficulty, int clearedCount, FileInfo file)
     {

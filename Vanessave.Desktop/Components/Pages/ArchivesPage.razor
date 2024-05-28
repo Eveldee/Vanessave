@@ -49,6 +49,9 @@
                         <MudTooltip RootClass="d-flex" Text="Edit">
                             <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
                         </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Move or Rename">
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.DriveFileMove" OnClick="() => RenameButtonClick(groupName, saveInfo)"/>
+                        </MudTooltip>
                         <MudTooltip RootClass="d-flex" Text="Save copy to...">
                             <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Share" OnClick="() => SaveAsButtonClick(saveInfo)"/>
                         </MudTooltip>
@@ -99,14 +102,16 @@
         TabBarService.OpenSave(saveInfo);
     }
 
-    private async Task DeleteButtonClick(List<SaveInfo> group, SaveInfo saveInfo)
+    private async Task RenameButtonClick(string group, SaveInfo saveInfo)
     {
-        var parameters = new DialogParameters<ConfirmDialog>
+        // Select a new archive group and name
+        var parameters = new DialogParameters<SelectArchiveDialog>
         {
-            { confirmDialog => confirmDialog.ConfirmMessage, "This action is irreversible" }
+            { selectArchive => selectArchive.Group, group },
+            { selectArchive => selectArchive.SaveName, saveInfo.SaveName }
         };
 
-        var dialog = await DialogService.ShowAsync<ConfirmDialog>($"Delete save {saveInfo.SaveName}?", parameters);
+        var dialog = await DialogService.ShowAsync<SelectArchiveDialog>("Rename archive", parameters);
         var result = await dialog.Result;
 
         if (result.Canceled)
@@ -114,7 +119,15 @@
             return;
         }
 
-        SavesManager.DeleteArchive(group, saveInfo);
+        var (newGroup, newSaveName) = ((string, string)) result.Data;
+
+        // Rename archive if there is a change in group or name
+        if (group != newGroup || saveInfo.SaveName != newSaveName)
+        {
+            ArchivesManager.Rename(group, saveInfo, newGroup, newSaveName);
+
+            Snackbar.AddSuccess($"Archive successfully moved and renamed to ({newGroup}, {newSaveName})");
+        }
     }
 
     private async Task SaveAsButtonClick(SaveInfo saveInfo)
@@ -134,6 +147,24 @@
         {
             Snackbar.AddError($"An error occured while exporting '{saveInfo.SaveName}' to '{fileInfo.FullName}': {e.Message}");
         }
+    }
+
+    private async Task DeleteButtonClick(List<SaveInfo> group, SaveInfo saveInfo)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { confirmDialog => confirmDialog.ConfirmMessage, "This action is irreversible" }
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>($"Delete save {saveInfo.SaveName}?", parameters);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        SavesManager.DeleteArchive(group, saveInfo);
     }
 
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Vanessave.Desktop.Models;
 using Vanessave.Shared.Models.Nobeta;
-using Vanessave.Shared.Services;
 using Vanessave.Shared.Utils;
 
 namespace Vanessave.Desktop.Services;
@@ -25,15 +23,13 @@ public class ArchivesManager
     public List<SaveInfo>? this[string groupName] => _archives.GetValueOrDefault(groupName);
 
     private readonly ILogger<ArchivesManager> _logger;
-    private readonly SaveCipherProvider _saveCipherProvider;
     private readonly SavesManager _savesManager;
 
     private readonly Dictionary<string, List<SaveInfo>> _archives;
 
-    public ArchivesManager(ILogger<ArchivesManager> logger, SaveCipherProvider saveCipherProvider, SavesManager savesManager)
+    public ArchivesManager(ILogger<ArchivesManager> logger, SavesManager savesManager)
     {
         _logger = logger;
-        _saveCipherProvider = saveCipherProvider;
         _savesManager = savesManager;
 
         _archives = [];
@@ -105,6 +101,14 @@ public class ArchivesManager
             GetArchiveFile(groupName, saveName)
         );
 
+        AddSaveToGroup(groupName, saveInfo);
+
+        // Write save file on disk
+        _savesManager.WriteGameSave(saveInfo, gameSave);
+    }
+
+    private void AddSaveToGroup(string groupName, SaveInfo saveInfo)
+    {
         // Check if group needs to be created
         if (_archives.GetValueOrDefault(groupName) is { } group)
         {
@@ -121,9 +125,25 @@ public class ArchivesManager
 
             _archives[groupName] = newGroup;
         }
+    }
 
-        // Write save file
-        _savesManager.WriteGameSave(saveInfo, gameSave);
+    public void Rename(string oldGroup, SaveInfo oldSaveInfo, string newGroup, string newSaveName)
+    {
+        // Move file on disk
+        var destinationFile = GetArchiveFile(newGroup, newSaveName);
+
+        oldSaveInfo.File.MoveTo(destinationFile.FullName);
+
+        // Generate new SaveInfo from old one
+        var newSaveInfo = oldSaveInfo with
+        {
+            SaveName = newSaveName,
+            File = destinationFile
+        };
+
+        // Remove from old group and add to new
+        _archives[oldGroup].Remove(oldSaveInfo);
+        AddSaveToGroup(newGroup, newSaveInfo);
     }
 
     private FileInfo GetArchiveFile(string groupName, string archiveName)
