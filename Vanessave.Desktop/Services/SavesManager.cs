@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using MudBlazor;
@@ -30,12 +31,16 @@ public class SavesManager
             case SaveType.GameSave:
                 workspaceData.GameSaveInfos.Remove(saveInfo);
                 break;
-            case SaveType.SaveState:
-                // TODO
-                throw new NotImplementedException();
             default:
-                throw new ArgumentException("SaveInfo can only be of type GameSave or SaveState", nameof(saveInfo));
+                throw new ArgumentException("SaveInfo can only be of type GameSave", nameof(saveInfo));
         }
+
+        saveInfo.File.Delete();
+    }
+
+    public void DeleteArchive(List<SaveInfo> group, SaveInfo saveInfo)
+    {
+        group.Remove(saveInfo);
 
         saveInfo.File.Delete();
     }
@@ -123,7 +128,7 @@ public class SavesManager
         return false;
     }
 
-    private async Task<GameSave?> ReadGameSave(FileInfo fileInfo)
+    public async Task<GameSave?> ReadGameSave(FileInfo fileInfo)
     {
         if (!fileInfo.Exists)
         {
@@ -156,20 +161,5 @@ public class SavesManager
     public Task WriteGameSave(SaveInfo saveInfo, GameSave gameSave)
     {
         return WriteGameSave(gameSave, saveInfo.File);
-    }
-
-    private async Task<bool> IsValidGameSave(FileInfo fileInfo)
-    {
-        try
-        {
-            await using var decryptStream = _saveCipherProvider.GetDecryptStream(fileInfo.OpenRead());
-            var gameSave = await JsonUtils.LoadGameSaveAsync(decryptStream);
-
-            return gameSave is not null;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
     }
 }

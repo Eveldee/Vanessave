@@ -3,6 +3,6 @@ namespace Vanessave.Desktop.Models;
 public enum SaveType
 {
     GameSave,
-    Backup,
+    Archive,
     SaveState
 }

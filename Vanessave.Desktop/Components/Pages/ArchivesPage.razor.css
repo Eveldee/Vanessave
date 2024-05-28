@@ -1,0 +1,7 @@
+::deep .archive-tab.mud-tab-active {
+    color: var(--mud-palette-secondary) !important;
+}
+
+::deep .save {
+    cursor: pointer;
+}

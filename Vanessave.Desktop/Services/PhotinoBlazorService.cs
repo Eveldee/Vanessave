@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MudBlazor;
 using MudBlazor.Services;
 using Photino.Blazor;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
@@ -74,6 +72,7 @@ public class PhotinoBlazorService : IHostedService
         builder.Services.AddSingleton<SettingsProvider>();
         builder.Services.AddSingleton<IAppPreferencesProvider, AppPreferencesProvider>();
         builder.Services.AddSingleton<SavesManager>();
+        builder.Services.AddSingleton<ArchivesManager>();
 
         // Register root component
         builder.RootComponents.Add<App>("app");
@@ -84,6 +83,7 @@ public class PhotinoBlazorService : IHostedService
 
         // Initialize some services
         ServiceProvider.GetRequiredService<SettingsProvider>();
+        ServiceProvider.GetRequiredService<ArchivesManager>();
 
         // Customize window
         _app.MainWindow

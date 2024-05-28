@@ -52,6 +52,10 @@ public static class JsonUtils
     {
         return JsonSerializer.Deserialize<GameSave>(gameSave, SaveOptions);
     }
+    public static GameSave? LoadGameSave(Stream gameSave)
+    {
+        return JsonSerializer.Deserialize<GameSave>(gameSave, SaveOptions);
+    }
     public static async Task<GameSave?> LoadGameSaveAsync(Stream gameSave)
     {
         return await JsonSerializer.DeserializeAsync<GameSave>(gameSave, SaveOptions);

@@ -1,0 +1,79 @@
+﻿@using Toolbelt.Blazor.HotKeys2
+@using Vanessave.Desktop.Services
+@inject ArchivesManager ArchivesManager
+
+<MudDialog DefaultFocus="DefaultFocus.FirstChild">
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="_isValid">
+            <MudTextField T="string" Label="Group" Required="true"
+                          @bind-Value="_group" Immediate="true"
+                          OnKeyUp="OnKeyUp"
+                          Validation="@(new Func<string, string?>(ValidateGroup))"/>
+            <MudTextField T="string" Label="Save Name" Required="true"
+                          @bind-Value="_saveName" Immediate="true"
+                          OnKeyUp="OnKeyUp"
+                          Validation="@(new Func<string, string?>(ValidateName))"/>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        <MudButton Disabled="!_isValid" Color="Color.Primary" OnClick="Close">Import</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    private MudDialogInstance Dialog { get; set; } = null!;
+
+    private MudForm _form = null!;
+
+    private bool _isValid = false;
+    private string _group = "";
+    private string _saveName = "";
+
+    private void Close()
+    {
+        _form.Validate();
+
+        if (_form.IsValid)
+        {
+            Dialog.Close(DialogResult.Ok((_group, _saveName)));
+        }
+    }
+
+    private void OnKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            Close();
+        }
+    }
+
+    private string? ValidateGroup(string group)
+    {
+        if (string.IsNullOrWhiteSpace(group))
+        {
+            return "Group cannot be empty";
+        }
+
+        return null;
+    }
+
+    private string? ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return "Save name cannot be empty";
+        }
+
+        // Avoid duplicate archives (same group + name)
+        if (ArchivesManager[_group] is { } group && group.Any(saveInfo => saveInfo.SaveName == _saveName))
+        {
+            return "An archive with the same name and group already exists";
+        }
+
+        return null;
+    }
+
+}

@@ -1,0 +1,139 @@
+@using Vanessave.Desktop.Components.Dialogs
+@using Vanessave.Desktop.Models
+@using Vanessave.Desktop.Services
+@using Vanessave.Shared.Utils.Extensions
+@inject ArchivesManager ArchivesManager
+@inject TabBarService TabBarService
+@inject SavesManager SavesManager
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<div class="d-flex flex-column">
+    <MudStack Row="true">
+        <MudText Typo="Typo.h3" Color="Color.Secondary">Archives</MudText>
+        <MudSpacer/>
+        <MudTooltip RootClass="d-flex" Text="Import a save file">
+            <MudButton Class="action-button" Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.FileOpen"
+                       OnClick="ImportSave">
+                Import Save
+            </MudButton>
+        </MudTooltip>
+        <MudTooltip RootClass="d-flex" Text="Refresh (F5)">
+            <MudButton Class="action-button" Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.Refresh"
+                       OnClick="RefreshArchives">
+                Refresh
+            </MudButton>
+        </MudTooltip>
+    </MudStack>
+
+    <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
+             Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true"
+             IconColor="Color.Secondary" SliderColor="Color.Secondary" TabPanelClass="archive-tab">
+        @foreach (var (groupName, group) in ArchivesManager.Groups.Where(pair => pair.Value.Count > 0).OrderBy(pair => pair.Key))
+        {
+            <MudTabPanel Text="@groupName">
+                @foreach (var (saveInfo, first) in group.OrderBy(saveInfo => saveInfo.SaveName).WithFirst())
+                {
+                    if (!first)
+                    {
+                        <MudDivider DividerType="DividerType.FullWidth"/>
+                    }
+
+                    <MudStack Row="true">
+                        <div class="py-5 flex-1 save" @onclick="() => EditSave(saveInfo)">
+                            <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
+                            <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
+                        </div>
+                        <MudTooltip RootClass="d-flex" Text="Edit">
+                            <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
+                        </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Save copy to...">
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Share" OnClick="() => SaveAsButtonClick(saveInfo)"/>
+                        </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Delete">
+                            <MudIconButton Class="action-button" Color="Color.Secondary" Icon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteButtonClick(group, saveInfo)"/>
+                        </MudTooltip>
+                    </MudStack>
+                }
+            </MudTabPanel>
+        }
+    </MudTabs>
+</div>
+
+@code {
+
+    private async Task ImportSave()
+    {
+        // Pick a save file
+        if (await SavesManager.PickSaveFile() is not { } gameSave)
+        {
+            Snackbar.AddError("Invalid save file");
+
+            return;
+        }
+
+        // Select an archive group and name
+        var dialog = await DialogService.ShowAsync<SelectArchiveDialog>("Import archive");
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        var (group, saveName) = ((string, string)) result.Data;
+
+        // Add archive
+        ArchivesManager.Add(group, saveName, gameSave);
+    }
+
+    private async Task RefreshArchives(MouseEventArgs obj)
+    {
+        await ArchivesManager.RefreshArchives();
+    }
+
+    private void EditSave(SaveInfo saveInfo)
+    {
+        TabBarService.OpenSave(saveInfo);
+    }
+
+    private async Task DeleteButtonClick(List<SaveInfo> group, SaveInfo saveInfo)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { confirmDialog => confirmDialog.ConfirmMessage, "This action is irreversible" }
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>($"Delete save {saveInfo.SaveName}?", parameters);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        SavesManager.DeleteArchive(group, saveInfo);
+    }
+
+    private async Task SaveAsButtonClick(SaveInfo saveInfo)
+    {
+        if (await SavesManager.PickSaveAs($"{saveInfo.SaveName}.dat") is not { } fileInfo)
+        {
+            return;
+        }
+
+        try
+        {
+            saveInfo.File.CopyTo(fileInfo.FullName, true);
+
+            Snackbar.AddSuccess($"Successfully exported '{saveInfo.SaveName}' to '{fileInfo.FullName}'");
+        }
+        catch (Exception e)
+        {
+            Snackbar.AddError($"An error occured while exporting '{saveInfo.SaveName}' to '{fileInfo.FullName}': {e.Message}");
+        }
+    }
+
+}

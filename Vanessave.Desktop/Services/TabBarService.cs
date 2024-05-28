@@ -72,10 +72,10 @@ public class TabBarService
 
         // NamedSaves tab
         _tabViews.Add(new TabView(
-            "Backups",
-            builder => builder.AddSimpleComponent<BackupsPage>(),
+            "Archives",
+            builder => builder.AddSimpleComponent<ArchivesPage>(),
             closeable: false,
-            icon: Icons.Material.Filled.SettingsBackupRestore
+            icon: Icons.Material.Filled.Archive
         ));
 
         // Set home as active tab

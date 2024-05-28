@@ -27,15 +27,17 @@ public class WorkspacesService
     private readonly SettingsProvider _settingsProvider;
     private readonly TabBarService _tabBarService;
     private readonly SaveCipherProvider _saveCipherProvider;
+    private readonly SavesManager _savesManager;
 
     private VanessaveSettings Settings => _settingsProvider.Settings;
 
-    public WorkspacesService(ILogger<WorkspacesService> logger, SettingsProvider settingsProvider, TabBarService tabBarService, SaveCipherProvider saveCipherProvider)
+    public WorkspacesService(ILogger<WorkspacesService> logger, SettingsProvider settingsProvider, TabBarService tabBarService, SaveCipherProvider saveCipherProvider, SavesManager savesManager)
     {
         _logger = logger;
         _settingsProvider = settingsProvider;
         _tabBarService = tabBarService;
         _saveCipherProvider = saveCipherProvider;
+        _savesManager = savesManager;
     }
 
     public Workspace? Add(ISnackbar snackbar)
@@ -127,8 +129,7 @@ public class WorkspacesService
                 try
                 {
                     // Load save
-                    await using var decryptStream = _saveCipherProvider.GetDecryptStream(gameSaveFile.OpenRead());
-                    var gameSave = await JsonUtils.LoadGameSaveAsync(decryptStream);
+                    var gameSave = await _savesManager.ReadGameSave(gameSaveFile);
 
                     if (gameSave is null)
                     {
