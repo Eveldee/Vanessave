@@ -8,6 +8,7 @@
 @inject WorkspacesService WorkspacesService
 @inject TabBarService TabBarService
 @inject SavesManager SavesManager
+@inject ArchivesManager ArchivesManager
 @inject HotKeys Hotkeys
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
@@ -56,6 +57,9 @@ else
                         </div>
                         <MudTooltip RootClass="d-flex" Text="Edit">
                             <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
+                        </MudTooltip>
+                        <MudTooltip RootClass="d-flex" Text="Archive">
+                            <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.Archive" OnClick="() => ArchiveButtonClick(saveInfo)"/>
                         </MudTooltip>
                         <MudTooltip RootClass="d-flex" Text="Copy to slot">
                             <MudIconButton Class="action-button" Color="Color.Primary" Icon="@Icons.Material.Filled.ContentCopy" OnClick="() => CopyToSlotButtonClick(saveInfo)"/>
@@ -212,6 +216,23 @@ else
 
             Snackbar.AddSuccess($"Successfully copied {saveInfo.SaveName} to Slot {slotIndex}");
         }
+    }
+
+    private async Task ArchiveButtonClick(SaveInfo saveInfo)
+    {
+        // Select an archive group and name
+        var dialog = await DialogService.ShowAsync<SelectArchiveDialog>("Import archive");
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        var (group, saveName) = ((string, string)) result.Data;
+
+        // Add archive
+        ArchivesManager.Add(group, saveName, saveInfo);
     }
 
     private async Task LoadSave()

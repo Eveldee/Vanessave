@@ -5,7 +5,7 @@ namespace Vanessave.Desktop.Models;
 
 public record SaveInfo
 {
-    public SaveType SaveType { get; }
+    public SaveType SaveType { get; init; }
 
     public string SaveName { get; init; }
 

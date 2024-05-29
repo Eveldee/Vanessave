@@ -8,7 +8,7 @@
 
 <MudDialog DefaultFocus="DefaultFocus.FirstChild">
     <DialogContent>
-        <MudSelect T="Workspace" Label="Workspace" @bind-Value="Workspace">
+        <MudSelect T="Workspace" Label="Installation" @bind-Value="Workspace">
             @foreach (var workspace in WorkspacesService.Workspaces)
             {
                 <MudSelectItem Value="workspace">@workspace.Name</MudSelectItem>

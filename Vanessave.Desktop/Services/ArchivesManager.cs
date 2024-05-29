@@ -106,6 +106,21 @@ public class ArchivesManager
         // Write save file on disk
         _savesManager.WriteGameSave(saveInfo, gameSave);
     }
+    public void Add(string groupName, string saveName, SaveInfo saveInfo)
+    {
+        var archiveInfo = saveInfo with
+        {
+            SaveName = saveName,
+            SaveType = SaveType.Archive,
+            File = GetArchiveFile(groupName, saveName)
+        };
+
+
+        AddSaveToGroup(groupName, archiveInfo);
+
+        // Write save file on disk
+        saveInfo.File.CopyTo(archiveInfo.File.FullName, true);
+    }
 
     private void AddSaveToGroup(string groupName, SaveInfo saveInfo)
     {
