@@ -3,16 +3,16 @@
 <MudStack Spacing="2">
     @if (!HideSaveSlot)
     {
-        <MudNumericField @bind-Value="@GameSave.Basic.DataIndex" Min="1" Max="9" Label="Save Slot"/>
+        <MudNumericField @bind-Value="@GameSave.Basic.DataIndex" Min="1" Max="9" Label="Save Slot" Immediate="true"/>
     }
 
-    <MudSelect T="GameDifficulty" @bind-Value="@GameSave.Basic.Difficulty" Label="Difficulty">
+    <MudSelect T="GameDifficulty" @bind-Value="@GameSave.Basic.Difficulty" Label="Difficulty" Immediate="true">
         @foreach (var value in Enum.GetValues<GameDifficulty>())
         {
             <MudSelectItem Value="value">@value.Humanize(LetterCasing.Title)</MudSelectItem>
         }
     </MudSelect>
-    <MudSelect T="GameStageIndex" @bind-Value="@GameSave.Basic.Stage" Label="Stage">
+    <MudSelect T="GameStageIndex" @bind-Value="@GameSave.Basic.Stage" Label="Stage" Immediate="true">
         @foreach (var value in Enum.GetValues<GameStageIndex>())
         {
             <MudSelectItem Value="value">@value.Humanize()</MudSelectItem>
@@ -20,10 +20,10 @@
     </MudSelect>
 
     <MudDivider DividerType="DividerType.FullWidth" Class="mt-5 mb-3"/>
-    <MudNumericField @bind-Value="@GameSave.Stats.CurrentMoney" Min="0" Label="Souls Count"/>
-    <MudNumericField @bind-Value="@GameSave.Stats.CurrentHealthyPoint" Min="0" Max="@SaveUtils.MaxHealth(GameSave)" Label="Current HP"/>
-    <MudNumericField @bind-Value="@GameSave.Stats.CurrentManaPoint" Min="0" Max="@SaveUtils.MaxMana(GameSave)" Label="Current MP"/>
-    <MudSelect T="MagicType" @bind-Value="@GameSave.Stats.CurrentMagicIndex" Label="Selected Magic">
+    <MudNumericField @bind-Value="@GameSave.Stats.CurrentMoney" Min="0" Label="Souls Count" Immediate="true"/>
+    <MudNumericField @bind-Value="@GameSave.Stats.CurrentHealthyPoint" Min="0" Max="@SaveUtils.MaxHealth(GameSave)" Label="Current HP" Immediate="true"/>
+    <MudNumericField @bind-Value="@GameSave.Stats.CurrentManaPoint" Min="0" Max="@SaveUtils.MaxMana(GameSave)" Label="Current MP" Immediate="true"/>
+    <MudSelect T="MagicType" @bind-Value="@GameSave.Stats.CurrentMagicIndex" Label="Selected Magic" Immediate="true">
         @foreach (var value in Enum.GetValues<MagicType>())
         {
             <MudSelectItem Value="value"/>
@@ -33,9 +33,9 @@
     <MudDivider DividerType="DividerType.FullWidth" Class="mt-5 mb-3"/>
     <MudNumericField @bind-Value="@GameSave.Basic.SavePoint" Label="Save Point"/>
     <MudCheckBox @bind-Value="@GameSave.Basic.ShowTeleportMenu" Label="Show Teleport Menu" Color="Color.Primary" Class="ml-n4"/>
-    <MudNumericField @bind-Value="@GameSave.Basic.TimeStamp" Label="Timestamp"/>
-    <MudNumericField @bind-Value="@GameSave.Basic.GamingTime" Label="Gaming Time"/>
-    <MudNumericField @bind-Value="@GameSave.Basic.GameCleared" Label="Game Cleared (NG+ Count)"/>
+    <MudNumericField @bind-Value="@GameSave.Basic.TimeStamp" Label="Timestamp" Immediate="true"/>
+    <MudNumericField @bind-Value="@GameSave.Basic.GamingTime" Label="Gaming Time" Immediate="true"/>
+    <MudNumericField @bind-Value="@GameSave.Basic.GameCleared" Label="Game Cleared (NG+ Count)" Immediate="true"/>
 </MudStack>
 
 @code {

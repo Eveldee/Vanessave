@@ -9,7 +9,7 @@
         }
     </MudStack>
     <MudText>Selected slot: @GameSave.Props.CurrentInventoryIndex</MudText>
-    <MudSlider T="int" Variant="Variant.Filled" TickMarks="true" ValueLabel="true" Style="max-width: 400px;" Min="4" Max="8" @bind-Value:get="@GameSave.Props.InventorySlots" @bind-Value:set="@SetCapacity">
+    <MudSlider T="int" Variant="Variant.Filled" TickMarks="true" ValueLabel="true" Style="max-width: 400px;" Min="4" Max="8" Immediate="true" @bind-Value:get="@GameSave.Props.InventorySlots" @bind-Value:set="@SetCapacity">
         Inventory capacity: @GameSave.Props.InventorySlots
     </MudSlider>
     <MudDivider Class="mt-4 mb-4"/>

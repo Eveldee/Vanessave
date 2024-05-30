@@ -3,10 +3,10 @@
     <MudCheckBox @bind-Value="@SystemSettings.BossRushTitleTips" Label="Trial Tower Title Tips (message shown when first unlocking Trial Tower)" Color="Color.Primary"/>
     <MudCheckBox @bind-Value="@SystemSettings.BossRushMaximumMagic" Label="Maximum Magic (unlocks Monica skin)" Color="Color.Primary"/>
     <MudDivider DividerType="DividerType.FullWidth" Class="mt-1 mb-3"/>
-    <MudNumericField @bind-Value="@SystemSettings.BossRushCleared" Label="Clear Count (at least 1 to unlock Black Cat and Tania skins)"/>
-    <MudNumericField @bind-Value="@SystemSettings.BossRushPerfectCleared" Label="Perfect Clear Count (at least 1 to unlock Vanessa skin)"/>
-    <MudNumericField @bind-Value="@SystemSettings.BossRushBestDeadCount" Label="Best Dead Count"/>
-    <MudNumericField @bind-Value="@SystemSettings.BossRushBestClearedTime" Label="Best Cleared Time"/>
+    <MudNumericField @bind-Value="@SystemSettings.BossRushCleared" Label="Clear Count (at least 1 to unlock Black Cat and Tania skins)" Immediate="true"/>
+    <MudNumericField @bind-Value="@SystemSettings.BossRushPerfectCleared" Label="Perfect Clear Count (at least 1 to unlock Vanessa skin)" Immediate="true"/>
+    <MudNumericField @bind-Value="@SystemSettings.BossRushBestDeadCount" Label="Best Dead Count" Immediate="true"/>
+    <MudNumericField @bind-Value="@SystemSettings.BossRushBestClearedTime" Label="Best Cleared Time" Immediate="true"/>
 </MudStack>
 
 @code {

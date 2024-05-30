@@ -3,12 +3,12 @@
     @* Magics *@
     <MudItem xs="12" md="6">
         <MudStack Spacing="2">
-            <MudNumericField @bind-Value="@GameSave.Stats.SecretMagicLevel" Min="1" Max="5" Label="Arcane Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.IceMagicLevel" Min="0" Max="5" Label="Ice Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.FireMagicLevel" Min="0" Max="5" Label="Fire Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.ThunderMagicLevel" Min="0" Max="5" Label="Thunder Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.ManaAbsorbLevel" Min="0" Max="5" Label="Absorb Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.WindMagicLevel" Min="0" Max="5" Label="Wind Level"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.SecretMagicLevel" Min="1" Max="5" Label="Arcane Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.IceMagicLevel" Min="0" Max="5" Label="Ice Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.FireMagicLevel" Min="0" Max="5" Label="Fire Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.ThunderMagicLevel" Min="0" Max="5" Label="Thunder Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.ManaAbsorbLevel" Min="0" Max="5" Label="Absorb Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.WindMagicLevel" Min="0" Max="5" Label="Wind Level" Immediate="true"/>
         </MudStack>
     </MudItem>
 
@@ -16,12 +16,12 @@
     <MudItem xs="12" md="6">
         <MudDivider DividerType="DividerType.FullWidth" Class="mb-3 d-md-none"/>
         <MudStack Spacing="2">
-            <MudNumericField @bind-Value:get="@GameSave.Stats.HealthyLevel" @bind-Value:set="SetHealthLevel" Min="1" Max="100" Label="HP Level"/>
-            <MudNumericField @bind-Value:get="@GameSave.Stats.ManaLevel" @bind-Value:set="SetManaLevel" Min="1" Max="100" Label="MP Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.StaminaLevel" Min="1" Max="100" Label="Stamina Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.StrengthLevel" Min="1" Max="100" Label="Strength Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.IntelligenceLevel" Min="1" Max="100" Label="Intelligence Level"/>
-            <MudNumericField @bind-Value="@GameSave.Stats.DexterityLevel" Min="1" Max="30" Label="Haste Level"/>
+            <MudNumericField @bind-Value:get="@GameSave.Stats.HealthyLevel" @bind-Value:set="SetHealthLevel" Min="1" Max="100" Label="HP Level" Immediate="true"/>
+            <MudNumericField @bind-Value:get="@GameSave.Stats.ManaLevel" @bind-Value:set="SetManaLevel" Min="1" Max="100" Label="MP Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.StaminaLevel" Min="1" Max="100" Label="Stamina Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.StrengthLevel" Min="1" Max="100" Label="Strength Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.IntelligenceLevel" Min="1" Max="100" Label="Intelligence Level" Immediate="true"/>
+            <MudNumericField @bind-Value="@GameSave.Stats.DexterityLevel" Min="1" Max="30" Label="Haste Level" Immediate="true"/>
         </MudStack>
     </MudItem>
 </MudGrid>
