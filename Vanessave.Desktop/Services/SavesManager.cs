@@ -152,6 +152,26 @@ public class SavesManager
         return ReadGameSave(saveInfo.File);
     }
 
+    public async Task<SystemSettings?> ReadSystemSettings(FileInfo fileInfo)
+    {
+        if (!fileInfo.Exists)
+        {
+            return null;
+        }
+
+        try
+        {
+            await using var decryptStream = _saveCipherProvider.GetDecryptStream(fileInfo.OpenRead());
+            var systemSettings = await JsonUtils.LoadSystemSettingsAsync(decryptStream);
+
+            return systemSettings;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
     private async Task WriteGameSave(GameSave gameSave, FileInfo destination)
     {
         await using var destinationStream = _saveCipherProvider.GetEncryptStream(destination.Create());

@@ -1,0 +1,3 @@
+::deep .settings-tab.mud-tab-active {
+    color: var(--mud-palette-secondary) !important;
+}

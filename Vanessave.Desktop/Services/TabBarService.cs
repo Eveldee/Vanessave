@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
@@ -184,6 +185,17 @@ public class TabBarService
             closeable: true,
             icon: Icons.Material.Filled.Edit,
             caption: "Save"
+        ));
+    }
+
+    public void OpenSettings(FileInfo fileInfo)
+    {
+        Open(new TabView(
+            name: fileInfo.Name,
+            content: builder => builder.AddSimpleComponent<EditSystemSettingsPage, FileInfo>(fileInfo),
+            closeable: true,
+            icon: Icons.Material.Filled.Settings,
+            caption: "Settings"
         ));
     }
 }

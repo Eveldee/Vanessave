@@ -1,8 +1,14 @@
+@using System.IO
+@using NativeFileDialogs.Net
 @using Vanessave.Desktop.Components.Dialogs
 @using Vanessave.Desktop.Models
 @using Vanessave.Desktop.Services
+@using Vanessave.Desktop.Utils
+@using Vanessave.Shared.Utils
 @using Vanessave.Shared.Utils.Extensions
 @inject WorkspacesService WorkspacesService
+@inject SavesManager SavesManager
+@inject TabBarService TabBar
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
@@ -75,9 +81,56 @@
         }
     }
 
-    private void OpenSaveSettingsButtonClick()
+    private async Task OpenSaveSettingsButtonClick()
     {
+        // Pick a save/settings file
+        // Run on thread pool to avoid UI lock and crash
+        NfdStatus? dialogResult = null;
+        string? path = null;
 
+        await Task.Run(() =>
+        {
+            try
+            {
+                dialogResult = Nfd.OpenDialog(out path, FileUtils.SaveSettingsFilters);
+            }
+            catch
+            {
+                dialogResult = null;
+            }
+        });
+
+        if (dialogResult != NfdStatus.Ok || path is null)
+        {
+            return;
+        }
+
+        var fileInfo = new FileInfo(path);
+
+        // Try reading the file as a save
+        if (await SavesManager.ReadGameSave(fileInfo) is { } gameSave)
+        {
+            var saveInfo = new SaveInfo(
+                SaveType.GameSave,
+                fileInfo.Name,
+                NobetaUtils.StageToFriendlyName(gameSave),
+                gameSave.Basic.Difficulty,
+                gameSave.Basic.GameCleared,
+                fileInfo
+            );
+
+            TabBar.OpenSave(saveInfo);
+        }
+        // Try reading the file as system settings
+        else if (await SavesManager.ReadSystemSettings(fileInfo) is { } systemSettings)
+        {
+            TabBar.OpenSettings(fileInfo);
+        }
+        // Invalid file
+        else
+        {
+            Snackbar.AddError("Invalid save or settings file");
+        }
     }
 
     private void OpenWorkspace(Workspace workspace)

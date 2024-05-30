@@ -110,12 +110,13 @@ public class WorkspacesService
     public async Task<WorkspaceData> LoadWorkspaceData(Workspace workspace)
     {
         // Load system settings
-        await using var systemSettingsStream = _saveCipherProvider.GetDecryptStream(workspace.SystemSettingsFile.OpenRead());
-        var systemSettings = await JsonUtils.LoadSystemSettingsAsync(systemSettingsStream);
+        var systemSettings = await _savesManager.ReadSystemSettings(workspace.SystemSettingsFile);
 
         if (systemSettings is null)
         {
             _logger.LogError("Couldn't load system settings for workspace '{Name}'", workspace.Name);
+
+            throw new InvalidOperationException("Settings are required to load a workspace");
         }
 
         // Load game saves

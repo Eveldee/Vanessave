@@ -1,0 +1,123 @@
+﻿@using System.IO
+@using Toolbelt.Blazor.HotKeys2
+@using Vanessave.Desktop.Services
+@using Vanessave.Shared.Models
+@using Vanessave.Shared.Models.Nobeta
+@using Vanessave.Shared.Services
+@using Vanessave.Shared.Utils
+@using Vanessave.Shared.Utils.Extensions
+@using Position = MudBlazor.Position
+@implements IDisposable
+@inject SaveCipherProvider SaveCipherProvider
+@inject SavesManager SavesManager
+@inject HotKeys Hotkeys
+@inject FabService FabService
+@inject ISnackbar Snackbar
+
+<div>
+    @if (_systemSettings is null)
+    {
+        <div class="d-grid justify-center align-center">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+        </div>
+    }
+    else
+    {
+        <MudStack Row="true">
+            <MudText Typo="Typo.h3" Color="Color.Secondary">@FileInfo.Name</MudText>
+            <MudSpacer/>
+            <MudTooltip RootClass="d-flex" Text="Undo changes">
+                <MudButton Class="action-button" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Undo" OnClick="LoadSettings">
+                    Undo
+                </MudButton>
+            </MudTooltip>
+            <MudTooltip RootClass="d-flex" Text="Reload save from disk (F5)">
+                <MudButton Class="action-button" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Refresh" OnClick="LoadSettings">
+                    Refresh
+                </MudButton>
+            </MudTooltip>
+        </MudStack>
+
+        <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
+                 Class="mt-4" PanelClass="pa-6" ApplyEffectsToContainer="true"
+                 IconColor="Color.Secondary" SliderColor="Color.Secondary" TabPanelClass="settings-tab">
+            <MudTabPanel Icon="@Icons.Material.Filled.Edit" Text="Stats">
+                <GeneralStats SystemSettings="_systemSettings" />
+            </MudTabPanel>
+            <MudTabPanel Icon="@Icons.Material.Filled.List" Text="Skin Selector">
+                <SkinSelector SystemSettings="_systemSettings" />
+            </MudTabPanel>
+            <MudTabPanel Icon="@Icons.Custom.Uncategorized.ChessRook" Text="Trial Tower">
+                <TrialTower SystemSettings="_systemSettings" />
+            </MudTabPanel>
+            <MudTabPanel Icon="@Icons.Material.Filled.VideoLibrary" Text="Video Unlocker">
+                <VideoUnlocker SystemSettings="_systemSettings" />
+            </MudTabPanel>
+            <MudTabPanel Icon="@Icons.Material.Filled.MenuBook" Text="Achievements">
+                <AchievementsEditor SystemSettings="_systemSettings" />
+            </MudTabPanel>
+        </MudTabs>
+    }
+</div>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public FileInfo FileInfo { get; set; } = null!;
+
+    private SystemSettings? _systemSettings;
+    private HotKeysContext? _hotKeysContext;
+    private FabInstance? _saveFab;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_systemSettings is null)
+        {
+            await LoadSettings();
+        }
+
+        _saveFab = FabService.Add(
+            "Save changes (Ctrl + S)",
+            Icons.Material.Filled.Save,
+            Color.Secondary,
+            EventCallback.Factory.Create(this, WriteSystemSettings)
+        );
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _hotKeysContext = Hotkeys.CreateContext()
+                .Add(Code.F5, LoadSettings, new HotKeyOptions { Exclude = Exclude.None })
+                .Add(ModCode.Ctrl, Code.S, WriteSystemSettings, new HotKeyOptions { Exclude = Exclude.None });
+        }
+    }
+
+    public async Task WriteSystemSettings()
+    {
+        if (_systemSettings is not null)
+        {
+            await using var destinationStream = SaveCipherProvider.GetEncryptStream(FileInfo.Create());
+
+            await JsonUtils.WriteSystemSettingsAsync(_systemSettings, destinationStream);
+
+            Snackbar.AddSuccess("Changes successfully saved");
+        }
+    }
+
+    private async Task LoadSettings()
+    {
+        _systemSettings = await SavesManager.ReadSystemSettings(FileInfo);
+    }
+
+    public void Dispose()
+    {
+        _hotKeysContext?.Dispose();
+        _saveFab?.Dispose();
+    }
+
+}
+
