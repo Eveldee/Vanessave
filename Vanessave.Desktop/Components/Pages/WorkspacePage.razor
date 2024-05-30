@@ -51,10 +51,7 @@ else
                     }
 
                     <MudStack Row="true">
-                        <div class="py-5 flex-1 save" @onclick="() => EditSave(saveInfo)">
-                            <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
-                            <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
-                        </div>
+                        <SaveDetails SaveInfo="saveInfo" Class="py-5 flex-1 save" OnClick="() => EditSave(saveInfo)" />
                         <MudTooltip RootClass="d-flex" Text="Edit">
                             <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
                         </MudTooltip>
@@ -87,7 +84,7 @@ else
                                       .OrderBy(group => group.Key))
                         {
                             <MudTabPanel Text="@group.Key">
-                                @foreach (var ((saveState, saveInfo), first) in group.OrderBy(pair => pair.Value.SaveName).WithFirst())
+                                @foreach (var ((_, saveInfo), first) in group.OrderBy(pair => pair.Value.SaveName).WithFirst())
                                 {
                                     if (!first)
                                     {
@@ -95,10 +92,7 @@ else
                                     }
 
                                     <MudStack Row="true">
-                                        <div class="py-5 flex-1 save" @onclick="() => EditSave(saveInfo)">
-                                            <MudText Color="Color.Primary" Typo="Typo.subtitle1">@saveInfo.SaveName</MudText>
-                                            <MudText Typo="Typo.caption">@saveInfo.StageName</MudText>
-                                        </div>
+                                        <SaveDetails SaveInfo="saveInfo" Class="py-5 flex-1 save" OnClick="() => EditSave(saveInfo)" />
                                         <MudTooltip RootClass="d-flex" Text="Edit">
                                             <MudIconButton Class="action-button" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit" OnClick="() => EditSave(saveInfo)"/>
                                         </MudTooltip>
