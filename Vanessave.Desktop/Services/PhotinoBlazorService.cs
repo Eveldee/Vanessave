@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using NReco.Logging.File;
 using Photino.Blazor;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Vanessave.Desktop.Components;
@@ -56,6 +57,11 @@ public class PhotinoBlazorService : IHostedService
         var builder = PhotinoBlazorAppBuilder.CreateDefault([]);
 
         _serviceCollectionInjector.InjectInto(builder.Services);
+
+        builder.Services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.AddFile("logs.txt", false);
+        });
 
         builder.Services.AddMudServices(configuration =>
         {
