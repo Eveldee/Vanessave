@@ -1,5 +1,6 @@
 using Vanessave.Components;
 using MudBlazor.Services;
+using Vanessave.Services;
 using Vanessave.Shared.Services;
 using Vanessave.Shared.Utils.Extensions;
 
@@ -16,6 +17,8 @@ builder.Services.AddMudServices(configuration =>
 });
 
 builder.Services.AddVanessaveServices();
+
+builder.Services.AddScoped<IAppPreferencesProvider, AppPreferencesProvider>();
 
 var app = builder.Build();
 

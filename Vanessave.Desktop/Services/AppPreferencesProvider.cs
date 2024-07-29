@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Vanessave.Desktop.Models;
 using Vanessave.Shared.Services;
 using Vanessave.Shared.Utils;
@@ -29,6 +30,11 @@ public class AppPreferencesProvider : IAppPreferencesProvider
         return default;
     }
 
+    public Task<T?> GetValueAsync<T>(string key)
+    {
+        return Task.FromResult(GetValue<T>(key));
+    }
+
     public void SetValue<T>(string key, T value)
     {
         Settings.Preferences[key] = JsonSerializer.Serialize(value, JsonUtils.PrettifyOptions);
@@ -36,5 +42,12 @@ public class AppPreferencesProvider : IAppPreferencesProvider
         _settingsProvider.Save(nameof(Settings.Preferences));
 
         PreferenceChanged?.Invoke(key);
+    }
+
+    public Task SetValueAsync<T>(string key, T value)
+    {
+        SetValue(key, value);
+
+        return Task.CompletedTask;
     }
 }

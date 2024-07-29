@@ -8,7 +8,7 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <ContainerFamily>alpine</ContainerFamily>
         <ContainerRepository>eveldee/vanessave</ContainerRepository>
-        <Version>1.1.0</Version>
+        <Version>1.1.1</Version>
     </PropertyGroup>
 
     <ItemGroup>

@@ -4,7 +4,7 @@
 @implements IDisposable
 @inject IAppPreferencesProvider Preferences
 
-<CascadingValue Value=false Name="UsePopoverProvider">
+<CascadingValue Value="false" Name="UsePopoverProvider">
     <MudThemeProvider @ref="_mudThemeProvider" Theme="MyTheme" @bind-IsDarkMode="_isDarkMode"/>
 </CascadingValue>
 
@@ -17,14 +17,14 @@
     {
         if (firstRender)
         {
-            if (Preferences.IsDarkMode is { } isDarkMode)
+            if (await Preferences.IsDarkModeAsync() is { } isDarkMode)
             {
                 _isDarkMode = isDarkMode;
             }
             else
             {
                 _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-                Preferences.IsDarkMode = _isDarkMode;
+                await Preferences.SetDarkModeAsync(_isDarkMode);
             }
 
             // Subscribe to theme change
@@ -34,11 +34,11 @@
         }
     }
 
-    private void OnPreferenceChanged(string preferenceKey)
+    private async Task OnPreferenceChanged(string preferenceKey)
     {
         if (preferenceKey == AppPreferences.IsDarkMode)
         {
-            _isDarkMode = Preferences.GetValue<bool>(AppPreferences.IsDarkMode);
+            _isDarkMode = await Preferences.GetValueAsync<bool>(AppPreferences.IsDarkMode);
 
             StateHasChanged();
         }

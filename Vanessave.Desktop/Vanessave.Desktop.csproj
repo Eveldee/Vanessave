@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ApplicationIcon>favicon.ico</ApplicationIcon>
 		<OutputType>WinExe</OutputType>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

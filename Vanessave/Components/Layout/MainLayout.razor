@@ -1,5 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using Vanessave.Shared.Services
+@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject IAppPreferencesProvider Preferences
 
 <MyMudThemeProvider/>
 <MyMudProviders/>
@@ -25,6 +27,11 @@
 
         <main>
             <div class="top-row px-4">
+                <MudToggleIconButton @bind-Toggled:get="@(IsDarkMode.HasValue && IsDarkMode!.Value)"
+                                     @bind-Toggled:set="@(async value => { IsDarkMode = value; await UpdateDarkMode(); })"
+                                     Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit"
+                                     ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="Color.Warning"/>
+
                 <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="color: white;" Link="https://github.com/Eveldee/Vanessave" Target="_blank"/>
             </div>
 
@@ -46,5 +53,23 @@
 
 @code
 {
+    private bool? IsDarkMode { get; set; } = null;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            IsDarkMode = await Preferences.IsDarkModeAsync();
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task UpdateDarkMode()
+    {
+        if (IsDarkMode is not null)
+        {
+            await Preferences.SetDarkModeAsync(IsDarkMode.Value);
+        }
+    }
 }
