@@ -53,7 +53,7 @@
         _flagInfos = new FlagInfo[GameSave.Flags.Count];
         foreach (var (index, flag) in GameSave.Flags.Keys.Select((key, index) => (index, key)))
         {
-            _flagInfos[index] = new FlagInfo(flag[..7].Humanize(), flag[7..].Humanize(), flag);
+            _flagInfos[index] = new FlagInfo(flag[..7].Humanize(LetterCasing.Title), flag[7..].Humanize(LetterCasing.Title), flag);
         }
     }
 

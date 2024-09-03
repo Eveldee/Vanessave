@@ -15,7 +15,7 @@
     <MudSelect T="GameStageIndex" @bind-Value="@GameSave.Basic.Stage" Label="Stage" Immediate="true">
         @foreach (var value in Enum.GetValues<GameStageIndex>())
         {
-            <MudSelectItem Value="value">@value.Humanize()</MudSelectItem>
+            <MudSelectItem Value="value">@value.Humanize(LetterCasing.Title)</MudSelectItem>
         }
     </MudSelect>
 

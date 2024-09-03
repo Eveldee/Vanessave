@@ -17,7 +17,7 @@
 
     private static readonly SkinInfo[] Source = Enum
         .GetValues<GameSkin>()
-        .Select(skin => new SkinInfo(skin.Humanize(), $"_content/Vanessave.Shared/assets/skins/Skin_{skin.ToString()}.webp"))
+        .Select(skin => new SkinInfo(skin.Humanize(LetterCasing.Title), $"_content/Vanessave.Shared/assets/skins/Skin_{skin.ToString()}.webp"))
         .ToArray();
 
     [Parameter, EditorRequired]

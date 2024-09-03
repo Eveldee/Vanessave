@@ -17,7 +17,7 @@ public class AppPreferencesProvider : IAppPreferencesProvider
 
     public T GetValue<T>(string key)
     {
-        throw new NotImplementedException("Server side only supports async");
+        throw new NotSupportedException("Server side only supports async");
     }
 
     public async Task<T?> GetValueAsync<T>(string key)
@@ -29,7 +29,7 @@ public class AppPreferencesProvider : IAppPreferencesProvider
 
     public void SetValue<T>(string key, T value)
     {
-        throw new NotImplementedException("Server side only supports async");
+        throw new NotSupportedException("Server side only supports async");
     }
 
     public async Task SetValueAsync<T>(string key, T value)
